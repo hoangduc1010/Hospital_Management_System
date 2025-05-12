@@ -1,0 +1,29 @@
+package hospital.management.hospital_management.dto.request;
+
+
+import hospital.management.hospital_management.domain.RoleEntity;
+import hospital.management.hospital_management.util.constant.GenderEnum;
+import hospital.management.hospital_management.util.constant.RoleEnum;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class UserRequest {
+    String fullname;
+
+    String username;
+
+    String password;
+
+    String phoneNumber;
+
+    String dob;
+
+    GenderEnum gender;
+
+    RoleEnum role;
+}
