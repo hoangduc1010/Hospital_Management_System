@@ -5,6 +5,7 @@ import hospital.management.hospital_management.dto.request.UserRequest;
 import hospital.management.hospital_management.dto.response.UserResponse;
 import hospital.management.hospital_management.service.UserService;
 import hospital.management.hospital_management.util.annotation.ApiMessage;
+import hospital.management.hospital_management.util.error.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,8 +20,11 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    @ApiMessage("Create a user")
-    public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest userInfo){
+    @ApiMessage("Tạo mới ngừoi dùng")
+    public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest userInfo) throws CustomException {
         return ResponseEntity.ok().body(this.userService.createUser(userInfo));
     }
+
+
+
 }
