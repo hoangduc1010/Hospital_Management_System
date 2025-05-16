@@ -1,6 +1,7 @@
 package hospital.management.hospital_management.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import hospital.management.hospital_management.util.constant.RoleEnum;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,4 +26,8 @@ public class RoleEntity {
 
     @OneToMany(mappedBy = "role",cascade = CascadeType.ALL)
     List<UserEntity> users;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "permission_role", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))
+    List<PermissionEntity> permissions;
 }

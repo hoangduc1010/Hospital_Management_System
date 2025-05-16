@@ -29,7 +29,6 @@ public class AuthController {
     @Value("${ducnh.jwt.refresh-token-validity-in-seconds}")
     private Long refreshTokenExpiration;
     private final AuthService authService;
-    private final UserService userService;
     private final SecurityUtil securityUtil;
     @PostMapping("/register")
     @ApiMessage("Đăng kí người dùng")
@@ -37,7 +36,7 @@ public class AuthController {
         return ResponseEntity.ok().body(this.authService.registerUser(userInfo));
     }
 
-    @PostMapping("/credential-login")
+    @PostMapping("/login")
     @ApiMessage("Người dùng đăng nhập")
     public ResponseEntity<ResponseLoginDTO> credentialLogin(@Valid @RequestBody CredentialLoginRequest credentialLoginRequest) throws CustomException {
         ResponseLoginDTO responseLoginDTO=this.authService.credentialLogin(credentialLoginRequest);
@@ -50,6 +49,20 @@ public class AuthController {
         return ResponseEntity.ok().
                 header(HttpHeaders.SET_COOKIE, responseCookie.toString()).
                 body(this.authService.credentialLogin(credentialLoginRequest));
+    }
+
+    @PostMapping("/logout")
+    @ApiMessage("Đăng xuất người dùng")
+    public ResponseEntity<Void> logout() throws  CustomException{
+        ResponseCookie deleteSpringCookie=ResponseCookie
+                .from("refreshToken",null)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0)
+                .build();
+        this.authService.logout();
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE,deleteSpringCookie.toString()).body(null);
     }
 
 

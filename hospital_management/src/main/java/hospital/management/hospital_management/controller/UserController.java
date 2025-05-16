@@ -5,6 +5,8 @@ import hospital.management.hospital_management.dto.request.UserRequest;
 import hospital.management.hospital_management.dto.response.UserResponse;
 import hospital.management.hospital_management.service.UserService;
 import hospital.management.hospital_management.util.annotation.ApiMessage;
+import hospital.management.hospital_management.util.annotation.RoleAccess;
+import hospital.management.hospital_management.util.constant.RoleEnum;
 import hospital.management.hospital_management.util.error.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,7 @@ public class UserController {
 
     @PostMapping
     @ApiMessage("Tạo mới ngừoi dùng")
+    @RoleAccess(allowedRoles = {RoleEnum.ADMIN})
     public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest userInfo) throws CustomException {
         return ResponseEntity.ok().body(this.userService.createUser(userInfo));
     }

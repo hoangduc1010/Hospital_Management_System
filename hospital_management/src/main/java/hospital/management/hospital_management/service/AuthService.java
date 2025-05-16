@@ -11,8 +11,10 @@ import hospital.management.hospital_management.repository.UserRepository;
 import hospital.management.hospital_management.util.constant.RoleEnum;
 import hospital.management.hospital_management.util.error.CustomException;
 import hospital.management.hospital_management.util.secutiry.SecurityUtil;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -54,6 +56,7 @@ public class AuthService {
             this.userRepository.save(currentUser);
         }
     }
+    @Transactional
     public Authentication checkAuthentication(CredentialLoginRequest credentialLoginRequest){
         try{
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(credentialLoginRequest.getUsername(), credentialLoginRequest.getPassword());
@@ -74,5 +77,12 @@ public class AuthService {
        }else{
            throw new CustomException("Tài khoản không tồn tại");
        }
+    }
+    public void logout() throws CustomException{
+        String email=SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
+        if(email.equals("")){
+            throw new CustomException("User not found");
+        }
+        this.updateUserToken(null,email);
     }
 }
