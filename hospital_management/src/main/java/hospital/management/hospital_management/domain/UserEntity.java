@@ -2,10 +2,13 @@ package hospital.management.hospital_management.domain;
 
 
 import hospital.management.hospital_management.util.constant.GenderEnum;
+import hospital.management.hospital_management.util.secutiry.SecurityUtil;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.time.Instant;
 
 @Entity
 @Table(name="users")
@@ -29,7 +32,7 @@ public class UserEntity {
     @NotBlank(message="Mật khẩu không được để trống")
     String password;
 
-    @NotBlank(message="Số điện thoại không được để ")
+    @NotBlank(message="Số điện thoại không được để trống")
     String phoneNumber;
 
     String dob;
@@ -41,10 +44,35 @@ public class UserEntity {
     @JoinColumn(name="role_id")
     RoleEntity role;
 
+    @OneToOne(mappedBy = "user")
+    DoctorEntity doctor;
+
 
     @Column(columnDefinition = "MEDIUMTEXT")
     String refreshToken;
 
+    Instant createdAt;
+
+    Instant updatedAt;
+
+    String createdBy;
+
+    String updatedBy;
+
+    @PrePersist
+    public void userBeforeCreated() {
+        this.createdBy = SecurityUtil.getCurrentUserLogin().isPresent() == true ?
+                SecurityUtil.getCurrentUserLogin().get() : "";
+        this.createdAt = Instant.now();
+    }
+
+    @PreUpdate
+    public void userBeforeUpdated() {
+        this.updatedAt = Instant.now();
+        this.updatedBy = SecurityUtil.getCurrentUserLogin().isPresent() == true ?
+                SecurityUtil.getCurrentUserLogin().get() : "";
+
+    }
 
 
 }

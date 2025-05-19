@@ -1,9 +1,9 @@
 package hospital.management.hospital_management.dto.request;
 
 
+import hospital.management.hospital_management.domain.DepartmentEntity;
 import hospital.management.hospital_management.domain.RoleEntity;
-import hospital.management.hospital_management.util.constant.GenderEnum;
-import hospital.management.hospital_management.util.constant.RoleEnum;
+import hospital.management.hospital_management.util.constant.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -26,4 +26,12 @@ public class UserRequest {
     GenderEnum gender;
 
     RoleEnum role;
+
+    DoctorDiplomaEnum doctorDiploma;
+
+    NurseDiplomaEnum nurseDiploma;
+
+    Integer yearOfExperience;
+
+    DepartmentEnum department;
 }

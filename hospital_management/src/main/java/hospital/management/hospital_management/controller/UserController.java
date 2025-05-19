@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
+@RoleAccess(allowedRoles = {RoleEnum.ADMIN})
 public class UserController {
     private final UserService userService;
 
     @PostMapping
     @ApiMessage("Tạo mới ngừoi dùng")
-    @RoleAccess(allowedRoles = {RoleEnum.ADMIN})
     public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest userInfo) throws CustomException {
         return ResponseEntity.ok().body(this.userService.createUser(userInfo));
     }

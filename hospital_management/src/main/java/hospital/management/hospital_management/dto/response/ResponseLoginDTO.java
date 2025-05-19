@@ -1,6 +1,5 @@
 package hospital.management.hospital_management.dto.response;
 
-import hospital.management.hospital_management.domain.RoleEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,8 +18,7 @@ public class ResponseLoginDTO {
     @NoArgsConstructor
     public static class UserLogin{
         private Long id;
-        private String name;
-        private String email;
+        private String username;
         private String role;
     }
 

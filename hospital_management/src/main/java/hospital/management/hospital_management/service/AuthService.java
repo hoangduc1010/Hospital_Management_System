@@ -56,6 +56,7 @@ public class AuthService {
             this.userRepository.save(currentUser);
         }
     }
+
     @Transactional
     public Authentication checkAuthentication(CredentialLoginRequest credentialLoginRequest){
         try{

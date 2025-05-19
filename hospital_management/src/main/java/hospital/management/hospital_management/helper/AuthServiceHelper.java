@@ -31,7 +31,6 @@ public class AuthServiceHelper {
         ResponseLoginDTO.UserLogin userLogin = new ResponseLoginDTO.UserLogin(
                 currentUser.getId(),
                 currentUser.getUsername(),
-                currentUser.getFullname(),
                 role.getRoleName().name()
         );
         responseLoginDTO.setUserLogin(userLogin);

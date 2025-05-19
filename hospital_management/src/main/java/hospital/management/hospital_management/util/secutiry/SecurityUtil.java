@@ -42,7 +42,7 @@ public class SecurityUtil {
         ResponseLoginDTO.UserInsideToken userInsideToken=new ResponseLoginDTO.UserInsideToken();
         userInsideToken.setEmail(email);
         userInsideToken.setId(responseLoginDTO.getUserLogin().getId());
-        userInsideToken.setName(responseLoginDTO.getUserLogin().getName());
+        userInsideToken.setName(responseLoginDTO.getUserLogin().getUsername());
 
         Instant now = Instant.now();
         Instant validity = now.plus(this.accessTokenExpiration, ChronoUnit.SECONDS);
@@ -69,7 +69,7 @@ public class SecurityUtil {
         ResponseLoginDTO.UserInsideToken userInsideToken=new ResponseLoginDTO.UserInsideToken();
         userInsideToken.setEmail(email);
         userInsideToken.setId(responseLoginDTO.getUserLogin().getId());
-        userInsideToken.setName(responseLoginDTO.getUserLogin().getName());
+        userInsideToken.setName(responseLoginDTO.getUserLogin().getUsername());
         Instant now = Instant.now();
         Instant validity = now.plus(this.refreshTokenExpiration, ChronoUnit.SECONDS);
         // @formatter:off
