@@ -9,6 +9,7 @@ import hospital.management.hospital_management.dto.response.UserResponse;
 import hospital.management.hospital_management.repository.DepartmentRepository;
 import hospital.management.hospital_management.repository.DoctorRepository;
 import hospital.management.hospital_management.repository.UserRepository;
+import hospital.management.hospital_management.util.constant.DepartmentEnum;
 import hospital.management.hospital_management.util.constant.RoleEnum;
 import hospital.management.hospital_management.util.error.CustomException;
 import jakarta.transaction.Transactional;
@@ -16,6 +17,9 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -35,25 +39,40 @@ public class UserService {
         }
         userEntity=new UserEntity();
         UserResponse userResponse=new UserResponse();
-        modelMapper.map(userInfo,userEntity);
+        userEntity.setUsername(userInfo.getUsername());
+        userEntity.setGender(userInfo.getGender());
+        userEntity.setDob(userInfo.getDob());
+        userEntity.setPhoneNumber(userInfo.getPhoneNumber());
+        userEntity.setFullname(userInfo.getFullname());
         userEntity.setPassword(passwordEncoder.encode(userInfo.getPassword()));
         RoleEnum roleEnum = RoleEnum.valueOf(userInfo.getRole().name().toUpperCase());
         userEntity.setRole(this.roleService.findByRoleName(roleEnum));
         UserEntity savedUser=this.userRepository.save(userEntity);
         if(RoleEnum.DOCTOR.equals(userInfo.getRole())){
-//            DepartmentEntity currentDepartment=this.departmentRepository.findByDepartmentName(userInfo.getDepartment());
-//            if(currentDepartment==null){
-//                throw new CustomException("Khoa trực không tồn tại");
-//            }
+            if(userInfo.getDepartmentId()==null){
+                throw new CustomException("Khoa trực không được để trống");
+            }
+
             if(userInfo.getDoctorDiploma()==null){
                 throw new CustomException("Bằng cấp không để trống");
             }
-            DoctorEntity doctor=DoctorEntity.builder().user(savedUser).doctorDiploma(userInfo.getDoctorDiploma()).
-                    yearOfExperience(userInfo.getYearOfExperience()).build();
-            doctor=this.doctorRepository.save(doctor);
-            savedUser.setDoctor(doctor);
+            Set<DepartmentEntity> departments=new HashSet<>();
+            DoctorEntity doctor=new DoctorEntity();
+            doctor.setDepartments(departments);
+            doctor.setUser(savedUser);
+            doctor.setDoctorDiploma(userInfo.getDoctorDiploma());
+            doctor.setDepartments(departments);
+            doctor.setYearOfExperience(userInfo.getYearOfExperience());
+            DoctorEntity savedDoctor=this.doctorRepository.save(doctor);
+            for(Long departmentId:userInfo.getDepartmentId()){
+                DepartmentEntity departmentEntity=this.departmentRepository.findById(departmentId).get();
+                departmentEntity.getDoctors().add(savedDoctor);
+                savedDoctor.getDepartments().add(departmentEntity);
+                this.doctorRepository.save(savedDoctor);
+            }
+            userEntity.setDoctor(doctor);
         }
-        modelMapper.map(savedUser,userResponse);
+        modelMapper.map(userEntity,userResponse);
         return userResponse;
     }
     public UserEntity findByUsername(String username) throws CustomException{

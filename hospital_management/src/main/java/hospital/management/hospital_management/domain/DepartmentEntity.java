@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name="departments")
@@ -23,7 +24,7 @@ public class DepartmentEntity {
     @Enumerated(EnumType.STRING)
     DepartmentEnum departmentName;
 
-//    @OneToMany(mappedBy = "department",cascade = CascadeType.ALL)
-//    List<DoctorEntity> doctors;
+    @ManyToMany(mappedBy = "departments")
+    Set<DoctorEntity> doctors;
 
 }

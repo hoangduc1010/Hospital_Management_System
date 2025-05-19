@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DepartmentRepository extends JpaRepository<DepartmentEntity,Long>, JpaSpecificationExecutor<DepartmentEntity> {
-    DepartmentEntity findByDepartmentName(DepartmentEnum departmentEnum);
+    DepartmentEntity findByDepartmentName(DepartmentEnum departmentName);
 }

@@ -7,6 +7,8 @@ import hospital.management.hospital_management.util.constant.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Set;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -33,5 +35,5 @@ public class UserRequest {
 
     Integer yearOfExperience;
 
-    DepartmentEnum department;
+    Set<Long> departmentId;
 }

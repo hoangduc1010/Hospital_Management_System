@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "doctors")
 @Getter
@@ -21,7 +23,7 @@ public class DoctorEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "user_id")
     UserEntity user;
 
@@ -32,10 +34,14 @@ public class DoctorEntity {
     DoctorDiplomaEnum doctorDiploma;
 
 
-//    @NotNull(message = "Khoa trực không được để trống")
-//    @ManyToOne
-//    @JoinColumn(name = "department_id")
-//    DepartmentEntity department;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name="doctor_department",
+            joinColumns = @JoinColumn(name = "doctor_id"),
+            inverseJoinColumns = @JoinColumn(name="department_id")
+    )
+    Set<DepartmentEntity> departments;
+
 
 
 }
