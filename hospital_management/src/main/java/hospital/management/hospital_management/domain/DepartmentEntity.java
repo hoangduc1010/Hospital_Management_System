@@ -27,4 +27,9 @@ public class DepartmentEntity {
     @ManyToMany(mappedBy = "departments")
     Set<DoctorEntity> doctors;
 
+    @ManyToMany(mappedBy = "departments")
+    Set<NurseEntity> nurses;
+
+    String description;
+
 }

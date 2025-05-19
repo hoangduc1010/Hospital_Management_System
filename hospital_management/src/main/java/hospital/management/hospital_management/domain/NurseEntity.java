@@ -2,6 +2,7 @@ package hospital.management.hospital_management.domain;
 
 
 import hospital.management.hospital_management.util.constant.DoctorDiplomaEnum;
+import hospital.management.hospital_management.util.constant.NurseDiplomaEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -10,14 +11,13 @@ import lombok.experimental.FieldDefaults;
 import java.util.Set;
 
 @Entity
-@Table(name = "doctors")
+@Table(name="nurses")
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class DoctorEntity {
-
+public class NurseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -30,17 +30,13 @@ public class DoctorEntity {
 
     @NotNull(message = "Bằng cấp không được để trống")
     @Enumerated(EnumType.STRING)
-    DoctorDiplomaEnum doctorDiploma;
-
+    NurseDiplomaEnum nurseDiploma;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
-            name="doctor_department",
-            joinColumns = @JoinColumn(name = "doctor_id"),
+            name="nurse_department",
+            joinColumns = @JoinColumn(name = "nurse_id"),
             inverseJoinColumns = @JoinColumn(name="department_id")
     )
     Set<DepartmentEntity> departments;
-
-
-
 }

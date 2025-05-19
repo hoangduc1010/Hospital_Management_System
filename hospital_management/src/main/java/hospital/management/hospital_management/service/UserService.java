@@ -1,26 +1,19 @@
 package hospital.management.hospital_management.service;
-
-
-import hospital.management.hospital_management.domain.DepartmentEntity;
-import hospital.management.hospital_management.domain.DoctorEntity;
 import hospital.management.hospital_management.domain.UserEntity;
 import hospital.management.hospital_management.dto.request.UserRequest;
 import hospital.management.hospital_management.dto.response.UserResponse;
+import hospital.management.hospital_management.helper.UserServiceHelper;
 import hospital.management.hospital_management.repository.DepartmentRepository;
 import hospital.management.hospital_management.repository.DoctorRepository;
 import hospital.management.hospital_management.repository.UserRepository;
-import hospital.management.hospital_management.util.constant.DepartmentEnum;
 import hospital.management.hospital_management.util.constant.RoleEnum;
 import hospital.management.hospital_management.util.error.CustomException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.HashSet;
-import java.util.Set;
-
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -30,9 +23,11 @@ public class UserService {
     private final RoleService roleService;
     private final DepartmentRepository departmentRepository;
     private final DoctorRepository doctorRepository;
-
+    private final DoctorService doctorService;
+    private final UserServiceHelper userServiceHelper;
+    private final NurseService nurseService;
     @Transactional
-    public UserResponse createUser(UserRequest userInfo) throws CustomException{
+    public UserResponse createUser(UserRequest userInfo) throws CustomException, ConstraintViolationException {
         UserEntity userEntity=this.userRepository.findByUsername(userInfo.getUsername());
         if(userEntity!=null){
             throw new CustomException("Tài khoản đã tồn tại!");
@@ -44,37 +39,21 @@ public class UserService {
         userEntity.setDob(userInfo.getDob());
         userEntity.setPhoneNumber(userInfo.getPhoneNumber());
         userEntity.setFullname(userInfo.getFullname());
+        userEntity.setIsActive(true);
         userEntity.setPassword(passwordEncoder.encode(userInfo.getPassword()));
         RoleEnum roleEnum = RoleEnum.valueOf(userInfo.getRole().name().toUpperCase());
         userEntity.setRole(this.roleService.findByRoleName(roleEnum));
         UserEntity savedUser=this.userRepository.save(userEntity);
         if(RoleEnum.DOCTOR.equals(userInfo.getRole())){
-            if(userInfo.getDepartmentId()==null){
-                throw new CustomException("Khoa trực không được để trống");
-            }
-
-            if(userInfo.getDoctorDiploma()==null){
-                throw new CustomException("Bằng cấp không để trống");
-            }
-            Set<DepartmentEntity> departments=new HashSet<>();
-            DoctorEntity doctor=new DoctorEntity();
-            doctor.setDepartments(departments);
-            doctor.setUser(savedUser);
-            doctor.setDoctorDiploma(userInfo.getDoctorDiploma());
-            doctor.setDepartments(departments);
-            doctor.setYearOfExperience(userInfo.getYearOfExperience());
-            DoctorEntity savedDoctor=this.doctorRepository.save(doctor);
-            for(Long departmentId:userInfo.getDepartmentId()){
-                DepartmentEntity departmentEntity=this.departmentRepository.findById(departmentId).get();
-                departmentEntity.getDoctors().add(savedDoctor);
-                savedDoctor.getDepartments().add(departmentEntity);
-                this.doctorRepository.save(savedDoctor);
-            }
-            userEntity.setDoctor(doctor);
+            this.doctorService.createDoctor(userInfo,savedUser);
         }
-        modelMapper.map(userEntity,userResponse);
+        if(RoleEnum.NURSE.equals(userInfo.getRole())){
+            this.nurseService.createNurse(userInfo,userEntity);
+        }
+        userResponse=this.userServiceHelper.convertToUserResponse(savedUser);
         return userResponse;
     }
+
     public UserEntity findByUsername(String username) throws CustomException{
         UserEntity user = this.userRepository.findByUsername(username);
         if (user == null) {

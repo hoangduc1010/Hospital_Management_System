@@ -4,6 +4,8 @@ package hospital.management.hospital_management.domain;
 import hospital.management.hospital_management.util.constant.GenderEnum;
 import hospital.management.hospital_management.util.secutiry.SecurityUtil;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -35,6 +37,7 @@ public class UserEntity {
     @NotBlank(message="Số điện thoại không được để trống")
     String phoneNumber;
 
+
     String dob;
 
     @Enumerated(EnumType.STRING)
@@ -46,6 +49,13 @@ public class UserEntity {
 
     @OneToOne(mappedBy = "user")
     DoctorEntity doctor;
+
+    @OneToOne(mappedBy = "user")
+    NurseEntity nurse;
+
+    Boolean isActive;
+
+    String address;
 
 
     @Column(columnDefinition = "MEDIUMTEXT")

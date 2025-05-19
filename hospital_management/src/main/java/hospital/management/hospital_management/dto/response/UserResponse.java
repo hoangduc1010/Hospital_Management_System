@@ -1,19 +1,21 @@
 package hospital.management.hospital_management.dto.response;
 
 
-import hospital.management.hospital_management.util.constant.GenderEnum;
-import hospital.management.hospital_management.util.constant.RoleEnum;
+import hospital.management.hospital_management.util.constant.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserResponse {
+
+    Long id;
 
     String fullname;
 
@@ -25,6 +27,11 @@ public class UserResponse {
 
     RoleEnum roleName;
 
-    
+    String phoneNumber;
+
+    Set<DepartmentEnum> departmentNames;
+
+    DoctorDiplomaEnum doctorDiploma;
+    NurseDiplomaEnum nurseDiploma;
 
 }

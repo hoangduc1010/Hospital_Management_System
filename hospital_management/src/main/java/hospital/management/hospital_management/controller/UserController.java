@@ -8,8 +8,10 @@ import hospital.management.hospital_management.util.annotation.ApiMessage;
 import hospital.management.hospital_management.util.annotation.RoleAccess;
 import hospital.management.hospital_management.util.constant.RoleEnum;
 import hospital.management.hospital_management.util.error.CustomException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +26,7 @@ public class UserController {
 
     @PostMapping
     @ApiMessage("Tạo mới ngừoi dùng")
-    public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest userInfo) throws CustomException {
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest userInfo) throws CustomException {
         return ResponseEntity.ok().body(this.userService.createUser(userInfo));
     }
 
