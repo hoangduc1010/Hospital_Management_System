@@ -2,11 +2,13 @@ package hospital.management.hospital_management.service;
 
 import hospital.management.hospital_management.domain.DepartmentEntity;
 import hospital.management.hospital_management.domain.DoctorEntity;
+import hospital.management.hospital_management.domain.NurseEntity;
 import hospital.management.hospital_management.domain.UserEntity;
 import hospital.management.hospital_management.dto.request.UserRequest;
 import hospital.management.hospital_management.repository.DepartmentRepository;
 import hospital.management.hospital_management.repository.DoctorRepository;
 import hospital.management.hospital_management.repository.UserRepository;
+import hospital.management.hospital_management.util.constant.RoleEnum;
 import hospital.management.hospital_management.util.error.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,12 +26,14 @@ public class DoctorService {
         if(userInfo.getDepartmentId()==null){
             throw new CustomException("Khoa trực không được để trống");
         }
-
         if(userInfo.getDoctorDiploma()==null){
             throw new CustomException("Bằng cấp không để trống");
         }
         Set<DepartmentEntity> departments=new HashSet<>();
         DoctorEntity doctor=new DoctorEntity();
+        if(userInfo.getUserId()!=null){
+            doctor=this.doctorRepository.findById(userEntity.getDoctor().getId()).get();
+        }
         doctor.setDepartments(departments);
         doctor.setUser(userEntity);
         doctor.setDoctorDiploma(userInfo.getDoctorDiploma());
@@ -46,4 +50,6 @@ public class DoctorService {
         this.userRepository.save(userEntity);
 
     }
+
+
 }

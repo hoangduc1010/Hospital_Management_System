@@ -15,6 +15,9 @@ import java.util.Set;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserRequest {
+
+    Long userId;
+
     String fullname;
 
     String username;
@@ -25,7 +28,11 @@ public class UserRequest {
 
     String dob;
 
+    String address;
+
     GenderEnum gender;
+
+    String avatar;
 
     RoleEnum role;
 

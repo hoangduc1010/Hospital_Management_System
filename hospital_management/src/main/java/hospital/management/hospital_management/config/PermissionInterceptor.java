@@ -14,7 +14,6 @@ import hospital.management.hospital_management.util.error.CustomException;
 import hospital.management.hospital_management.util.secutiry.SecurityUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -66,12 +65,22 @@ public class PermissionInterceptor implements HandlerInterceptor {
 //                boolean isAllowed = false;
 //                for(RoleEnum role:allowedRoles){
 //                    RoleEnum roleEnum = RoleEnum.valueOf(role.toString());
-//                    RoleEntity perRole=this.roleRepository.findByRoleName(roleEnum);
-//                    perRole.getPermissions().add(permission);
-//                    roleRepository.save(perRole);
+//                    RoleEntity perRole = this.roleRepository.findByRoleName(roleEnum);
+//                    Boolean isExists=false;
+//                    for(PermissionEntity permissionEntity:perRole.getPermissions()){
+//                        if(permissionEntity.getMethod().equals(permission.getMethod()) &&
+//                        permissionEntity.getApiPath().equals(permission.getApiPath())){
+//                            isExists=true;
+//                        }
+//                    }
+//                    if(isExists==false){
+//                        perRole.getPermissions().add(permission);
+//                        roleRepository.save(perRole);
+//                        System.out.println("Thêm api path : "+permission.getApiPath()+" và method: "+permission.getMethod());
+//                    }
 //                    List<PermissionEntity> permissionRole=perRole.getPermissions();
 //                    boolean hasPermission = permissionRole.stream()
-//                            .anyMatch(p -> p.getApiPath().equals(path) && p.getMethod() == methodEnum);
+//                            .anyMatch(p -> p.getApiPath().equals(path) && p.getMethod().equals(methodEnum));
 //                    if (hasPermission) {
 //                        isAllowed = true;
 //                        break;

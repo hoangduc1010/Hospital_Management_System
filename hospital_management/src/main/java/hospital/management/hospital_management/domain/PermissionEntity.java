@@ -25,7 +25,6 @@ public class PermissionEntity {
     @Enumerated(EnumType.STRING)
     HttpMethodEnum method;
 
-    @ManyToMany( mappedBy = "permissions")
-    @JsonIgnore
+    @ManyToMany( mappedBy = "permissions",fetch = FetchType.EAGER)
     List<RoleEntity> roles;
 }

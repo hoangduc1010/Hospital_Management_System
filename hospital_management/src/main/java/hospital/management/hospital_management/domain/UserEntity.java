@@ -43,7 +43,7 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     GenderEnum gender;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="role_id")
     RoleEntity role;
 
@@ -56,6 +56,8 @@ public class UserEntity {
     Boolean isActive;
 
     String address;
+
+    String avatar;
 
 
     @Column(columnDefinition = "MEDIUMTEXT")

@@ -5,6 +5,7 @@ import hospital.management.hospital_management.dto.response.UserResponse;
 import hospital.management.hospital_management.helper.UserServiceHelper;
 import hospital.management.hospital_management.repository.DepartmentRepository;
 import hospital.management.hospital_management.repository.DoctorRepository;
+import hospital.management.hospital_management.repository.NurseRepository;
 import hospital.management.hospital_management.repository.UserRepository;
 import hospital.management.hospital_management.util.constant.RoleEnum;
 import hospital.management.hospital_management.util.error.CustomException;
@@ -12,6 +13,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 @Service
@@ -26,6 +28,7 @@ public class UserService {
     private final DoctorService doctorService;
     private final UserServiceHelper userServiceHelper;
     private final NurseService nurseService;
+    private final NurseRepository nurseRepository;
     @Transactional
     public UserResponse createUser(UserRequest userInfo) throws CustomException, ConstraintViolationException {
         UserEntity userEntity=this.userRepository.findByUsername(userInfo.getUsername());
@@ -60,6 +63,43 @@ public class UserService {
             throw new CustomException("Tài khoản không tồn tại!");
         }
         return user;
+
+    }
+
+    @Transactional
+    public UserResponse updateUser(UserRequest userInfo) throws CustomException{
+        if(userInfo.getUserId()==null){
+            throw new CustomException("Id user không để trống");
+        }
+        UserEntity currentUser=this.userRepository.findById(userInfo.getUserId()).get();
+        if(currentUser==null){
+            throw new CustomException("Không tìm thấy người dùng");
+        }
+        UserResponse userResponse=new UserResponse();
+        currentUser.setFullname(userInfo.getFullname());
+        currentUser.setPhoneNumber(userInfo.getPhoneNumber());
+        if(!RoleEnum.DOCTOR.equals(userInfo.getRole()) && currentUser.getDoctor()!=null){
+            this.doctorRepository.deleteById(currentUser.getDoctor().getId());
+            currentUser.setDoctor(null);
+        }
+        if(!RoleEnum.NURSE.equals(userInfo.getRole()) && currentUser.getNurse()!=null){
+            this.nurseRepository.deleteById(currentUser.getNurse().getId());
+            currentUser.setNurse(null);
+        }
+        RoleEnum roleEnum = RoleEnum.valueOf(userInfo.getRole().name().toUpperCase());
+        currentUser.setRole(this.roleService.findByRoleName(roleEnum));
+        currentUser.setAddress(userInfo.getAddress());
+        currentUser.setAvatar(userInfo.getAvatar());
+        UserEntity savedUser=this.userRepository.save(currentUser);
+        if(RoleEnum.DOCTOR.equals(userInfo.getRole())){
+            this.doctorService.createDoctor(userInfo,savedUser);
+        }
+
+        if(RoleEnum.NURSE.equals(userInfo.getRole())){
+            this.nurseService.createNurse(userInfo,savedUser);
+        }
+        userResponse=this.userServiceHelper.convertToUserResponse(savedUser);
+        return userResponse;
 
     }
 

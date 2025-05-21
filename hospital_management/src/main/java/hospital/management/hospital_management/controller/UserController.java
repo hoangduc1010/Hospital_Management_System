@@ -11,11 +11,7 @@ import hospital.management.hospital_management.util.error.CustomException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -28,6 +24,12 @@ public class UserController {
     @ApiMessage("Tạo mới ngừoi dùng")
     public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest userInfo) throws CustomException {
         return ResponseEntity.ok().body(this.userService.createUser(userInfo));
+    }
+
+    @PutMapping
+    @ApiMessage("Cập nhật người dùng")
+    public ResponseEntity<UserResponse> updateUser(@RequestBody UserRequest userInfo) throws CustomException{
+        return ResponseEntity.ok().body(this.userService.updateUser(userInfo));
     }
 
 
