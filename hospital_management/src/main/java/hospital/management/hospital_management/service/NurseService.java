@@ -34,7 +34,7 @@ public class NurseService {
         }
         Set<DepartmentEntity> departments=new HashSet<>();
         NurseEntity nurse=new NurseEntity();
-        if(userInfo.getUserId()!=null){
+        if(userInfo.getUserId()!=null && userEntity.getNurse()!=null){
             nurse=this.nurseRepository.findById(userEntity.getNurse().getId()).get();
         }
         nurse.setDepartments(departments);

@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DoctorRepository extends JpaRepository<DoctorEntity,Long>, JpaSpecificationExecutor<DoctorEntity> {
+    boolean existsById(Long id);
 }

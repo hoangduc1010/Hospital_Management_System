@@ -31,7 +31,7 @@ public class DoctorService {
         }
         Set<DepartmentEntity> departments=new HashSet<>();
         DoctorEntity doctor=new DoctorEntity();
-        if(userInfo.getUserId()!=null){
+        if(userInfo.getUserId()!=null && userEntity.getDoctor()!=null){
             doctor=this.doctorRepository.findById(userEntity.getDoctor().getId()).get();
         }
         doctor.setDepartments(departments);

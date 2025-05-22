@@ -48,14 +48,14 @@ public class DataLoaderConfig implements CommandLineRunner {
        if(userRepository.count()==0){
            String hashPassword = passwordEncoder.encode("123456");
            jdbcTemplate.update(
-                   "INSERT INTO users (id, fullname, phone_number, password, username, role_id) " +
-                           "VALUES (?, ?, ?, ?, ?, ?)",
+                   "INSERT INTO users (id, fullname, phone_number, password, username, role_id,is_active) " +
+                           "VALUES (?, ?, ?, ?, ?, ?,?)",
                    1,
                    "Hoang Duc Admin",
                    "012349998",
                    hashPassword,
                    "hoangducadmin",
-                   6
+                   6,true
            );
 
        }

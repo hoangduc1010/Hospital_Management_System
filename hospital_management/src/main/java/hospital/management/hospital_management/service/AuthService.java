@@ -69,6 +69,10 @@ public class AuthService {
         }
     }
     public ResponseLoginDTO credentialLogin(CredentialLoginRequest credentialLoginRequest)throws CustomException {
+        UserEntity userEntity=this.userRepository.findByUsername(credentialLoginRequest.getUsername());
+        if(userEntity.getIsActive()==false || userEntity==null){
+            throw new CustomException("Tài khoản không tồn tại");
+        }
        Authentication authentication=this.checkAuthentication(credentialLoginRequest);
        if(authentication!=null){
            ResponseLoginDTO responseLoginDTO=this.authServiceHelper.convertToReponseLogin(credentialLoginRequest,authentication);

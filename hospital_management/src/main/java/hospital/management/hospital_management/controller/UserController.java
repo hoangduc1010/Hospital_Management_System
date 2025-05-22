@@ -32,6 +32,18 @@ public class UserController {
         return ResponseEntity.ok().body(this.userService.updateUser(userInfo));
     }
 
+    @DeleteMapping("/{userId}")
+    @ApiMessage("Thay đổi trạng thái hoạt động tài khoản")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) throws CustomException {
+        this.userService.changeActiveUser(userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{userId}")
+    @ApiMessage("Lấy người dùng theo id")
+    public ResponseEntity<UserResponse> getUserById(@PathVariable Long userId) throws CustomException{
+        return ResponseEntity.ok().body(this.userService.getUserById(userId));
+    }
 
 
 }

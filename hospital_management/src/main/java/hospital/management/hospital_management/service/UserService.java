@@ -13,7 +13,6 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 @Service
@@ -101,6 +100,30 @@ public class UserService {
         userResponse=this.userServiceHelper.convertToUserResponse(savedUser);
         return userResponse;
 
+    }
+
+    @Transactional
+    public void changeActiveUser(Long id) throws CustomException{
+        UserEntity userEntity=this.userRepository.findById(id).get();
+        if(userEntity==null){
+            throw new CustomException("Tài khoản không tông tại");
+        }
+        if(userEntity.getIsActive()==true){
+            userEntity.setRefreshToken(null);
+            userEntity.setIsActive(false);
+        }else{
+            userEntity.setIsActive(true);
+        }
+        this.userRepository.save(userEntity);
+    }
+
+    public UserResponse getUserById(Long id) throws CustomException {
+        UserEntity userEntity=this.userRepository.findById(id).get();
+        if(userEntity==null){
+            throw new CustomException("Tài khoản không tồn tại");
+        }
+        UserResponse userResponse=this.userServiceHelper.convertToUserResponse(userEntity);
+        return userResponse;
     }
 
 }
