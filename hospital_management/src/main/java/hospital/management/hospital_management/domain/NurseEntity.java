@@ -32,7 +32,7 @@ public class NurseEntity {
     @Enumerated(EnumType.STRING)
     NurseDiplomaEnum nurseDiploma;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
             name="nurse_department",
             joinColumns = @JoinColumn(name = "nurse_id"),

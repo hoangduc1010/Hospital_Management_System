@@ -33,7 +33,7 @@ public class DoctorEntity {
     DoctorDiplomaEnum doctorDiploma;
 
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
             name="doctor_department",
             joinColumns = @JoinColumn(name = "doctor_id"),

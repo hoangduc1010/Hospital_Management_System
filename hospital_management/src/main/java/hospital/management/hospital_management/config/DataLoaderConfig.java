@@ -1,10 +1,9 @@
 package hospital.management.hospital_management.config;
 
 import hospital.management.hospital_management.domain.RoleEntity;
-import hospital.management.hospital_management.repository.DepartmentRepository;
-import hospital.management.hospital_management.repository.RoleRepository;
-import hospital.management.hospital_management.repository.UserRepository;
+import hospital.management.hospital_management.repository.*;
 import hospital.management.hospital_management.util.constant.DepartmentEnum;
+import hospital.management.hospital_management.util.constant.DoctorDiplomaEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -31,6 +30,10 @@ public class DataLoaderConfig implements CommandLineRunner {
 
     @Autowired
     private DepartmentRepository departmentRepository;
+    @Autowired
+    private DoctorRepository doctorRepository;
+    @Autowired
+    private NurseRepository nurseRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -71,6 +74,6 @@ public class DataLoaderConfig implements CommandLineRunner {
                 );
             }
         }
-
     }
+
 }

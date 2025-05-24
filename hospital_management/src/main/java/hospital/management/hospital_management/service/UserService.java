@@ -1,7 +1,9 @@
 package hospital.management.hospital_management.service;
 import hospital.management.hospital_management.domain.UserEntity;
 import hospital.management.hospital_management.dto.request.UserRequest;
+import hospital.management.hospital_management.dto.response.ResponsePaginationDTO;
 import hospital.management.hospital_management.dto.response.UserResponse;
+import hospital.management.hospital_management.helper.PaginationHelper;
 import hospital.management.hospital_management.helper.UserServiceHelper;
 import hospital.management.hospital_management.repository.DepartmentRepository;
 import hospital.management.hospital_management.repository.DoctorRepository;
@@ -13,8 +15,15 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -28,6 +37,7 @@ public class UserService {
     private final UserServiceHelper userServiceHelper;
     private final NurseService nurseService;
     private final NurseRepository nurseRepository;
+    private final PaginationHelper paginationHelper;
     @Transactional
     public UserResponse createUser(UserRequest userInfo) throws CustomException, ConstraintViolationException {
         UserEntity userEntity=this.userRepository.findByUsername(userInfo.getUsername());
@@ -125,5 +135,26 @@ public class UserService {
         UserResponse userResponse=this.userServiceHelper.convertToUserResponse(userEntity);
         return userResponse;
     }
+
+    public UserResponse getUserByUsername(String username) throws CustomException{
+        UserEntity currentUser=this.userRepository.findByUsername(username);
+        if(currentUser==null){
+            throw new CustomException("Không tìm thấy người dùng");
+        }
+        UserResponse userResponse=this.userServiceHelper.convertToUserResponse(currentUser);
+        return userResponse;
+    }
+
+    public <T> ResponsePaginationDTO<T> getAll(Specification specification, Pageable pageable) {
+        Page<T> userPage = this.userRepository.findAll(specification, pageable);
+        List<UserEntity> users= (List<UserEntity>) userPage.getContent();
+        List<UserResponse> userResponses=new ArrayList<>();
+        for(UserEntity user:users){
+            UserResponse userResponse=this.userServiceHelper.convertToUserResponse(user);
+            userResponses.add(userResponse);
+        }
+        return this.paginationHelper.getAllPagination(userPage, (List<T>) userResponses, pageable);
+    }
+
 
 }

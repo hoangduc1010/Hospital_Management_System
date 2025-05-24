@@ -7,6 +7,7 @@ import hospital.management.hospital_management.util.constant.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -42,5 +43,5 @@ public class UserRequest {
 
     Integer yearOfExperience;
 
-    Set<Long> departmentId;
+    List<Long> departmentId;
 }
