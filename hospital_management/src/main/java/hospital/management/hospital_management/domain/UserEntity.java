@@ -53,6 +53,9 @@ public class UserEntity {
     @OneToOne(mappedBy = "user")
     NurseEntity nurse;
 
+    @OneToOne(mappedBy = "user")
+    PatientEntity patient;
+
     Boolean isActive;
 
     String address;

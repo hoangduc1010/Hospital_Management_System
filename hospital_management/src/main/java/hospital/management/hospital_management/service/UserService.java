@@ -145,7 +145,7 @@ public class UserService {
         return userResponse;
     }
 
-    public <T> ResponsePaginationDTO<T> getAll(Specification specification, Pageable pageable) {
+    public <T> ResponsePaginationDTO<T> getAllUser(Specification specification, Pageable pageable) {
         Page<T> userPage = this.userRepository.findAll(specification, pageable);
         List<UserEntity> users= (List<UserEntity>) userPage.getContent();
         List<UserResponse> userResponses=new ArrayList<>();

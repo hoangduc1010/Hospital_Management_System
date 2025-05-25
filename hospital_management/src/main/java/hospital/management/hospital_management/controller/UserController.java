@@ -62,7 +62,7 @@ public class UserController {
     @ApiMessage("Lấy tất cả người dùng")
     public ResponseEntity<ResponsePaginationDTO> getAllUser(@Filter Specification<UserEntity> specification,
                                                             Pageable pageable) {
-        return ResponseEntity.ok().body(this.userService.getAll(specification,pageable));
+        return ResponseEntity.ok().body(this.userService.getAllUser(specification,pageable));
     }
 
 

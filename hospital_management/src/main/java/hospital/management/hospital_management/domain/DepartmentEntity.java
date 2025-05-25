@@ -1,7 +1,7 @@
 package hospital.management.hospital_management.domain;
 
 
-import hospital.management.hospital_management.util.constant.DepartmentEnum;
+
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -21,8 +21,7 @@ public class DepartmentEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Enumerated(EnumType.STRING)
-    DepartmentEnum departmentName;
+    String departmentName;
 
     @ManyToMany(mappedBy = "departments")
     Set<DoctorEntity> doctors;
@@ -30,6 +29,15 @@ public class DepartmentEntity {
     @ManyToMany(mappedBy = "departments")
     Set<NurseEntity> nurses;
 
+    @Column(columnDefinition = "MEDIUMTEXT")
     String description;
+
+    @OneToMany(mappedBy = "currentDepartment")
+    Set<PatientEntity> patients;
+
+    @OneToMany(mappedBy = "deparmentRoom")
+    Set<RoomEntity> rooms;
+
+
 
 }

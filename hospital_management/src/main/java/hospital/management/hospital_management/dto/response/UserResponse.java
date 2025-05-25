@@ -29,7 +29,7 @@ public class UserResponse {
 
     String phoneNumber;
 
-    Set<DepartmentEnum> departmentNames;
+    Set<String> departmentNames;
 
     DoctorDiplomaEnum doctorDiploma;
     NurseDiplomaEnum nurseDiploma;
