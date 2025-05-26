@@ -1,14 +1,11 @@
 package hospital.management.hospital_management.dto.request;
 
 
-import hospital.management.hospital_management.domain.DepartmentEntity;
-import hospital.management.hospital_management.domain.RoleEntity;
 import hospital.management.hospital_management.util.constant.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
 import java.util.List;
-import java.util.Set;
+
 
 @Getter
 @Setter

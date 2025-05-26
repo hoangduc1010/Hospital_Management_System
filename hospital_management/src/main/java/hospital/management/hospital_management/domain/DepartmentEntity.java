@@ -23,6 +23,8 @@ public class DepartmentEntity {
 
     String departmentName;
 
+    Boolean isActive;
+
     @ManyToMany(mappedBy = "departments")
     Set<DoctorEntity> doctors;
 
