@@ -2,7 +2,11 @@ package hospital.management.hospital_management.util.secutiry;
 
 
 import com.nimbusds.jose.util.Base64;
+import hospital.management.hospital_management.domain.UserEntity;
 import hospital.management.hospital_management.dto.response.ResponseLoginDTO;
+import hospital.management.hospital_management.repository.UserRepository;
+import hospital.management.hospital_management.util.error.CustomException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -28,6 +32,9 @@ public class SecurityUtil {
     public SecurityUtil(JwtEncoder jwtEncoder) {
         this.jwtEncoder = jwtEncoder;
     }
+
+    @Autowired
+    private static UserRepository userRepository;
 
     @Value("${ducnh.jwt.base64-secret}")
     private String jwtKey;
@@ -64,6 +71,8 @@ public class SecurityUtil {
         return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader,
                 claims)).getTokenValue();
     }
+
+
 
     public String createRefreshToken(String email,ResponseLoginDTO responseLoginDTO) {
         ResponseLoginDTO.UserInsideToken userInsideToken=new ResponseLoginDTO.UserInsideToken();

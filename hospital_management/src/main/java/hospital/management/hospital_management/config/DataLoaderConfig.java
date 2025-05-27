@@ -2,6 +2,7 @@ package hospital.management.hospital_management.config;
 
 
 import hospital.management.hospital_management.repository.*;
+import hospital.management.hospital_management.util.constant.RoleEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -35,20 +36,22 @@ public class DataLoaderConfig implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if (roleRepository.count() == 0) {
-            jdbcTemplate.update("INSERT INTO roles (id, role_name)\n" +
-                    "VALUES \n" +
-                    "  (1, 'PATIENT'),\n" +
-                    "  (2, 'DOCTOR'),\n" +
-                    "  (3, 'NURSE'),\n" +
-                    "  (4, 'RECEPTIONIST'),\n" +
-                    "  (5, 'ACCOUNTANT'),\n" +
-                    "  (6, 'ADMIN');");
-        }
+        insertRoles();
         insertDepartments();
         insertAdmin();
 
     }
+
+    public void insertRoles() {
+        if(roleRepository.count()==0){
+            int id = 1;
+            for (RoleEnum role : RoleEnum.values()) {
+                jdbcTemplate.update("INSERT INTO roles (id, role_name) VALUES (?, ?)", id++, role.name());
+            }
+        }
+
+    }
+
     public void insertAdmin(){
         if (userRepository.count() == 0) {
             String hashPassword = passwordEncoder.encode("123456");

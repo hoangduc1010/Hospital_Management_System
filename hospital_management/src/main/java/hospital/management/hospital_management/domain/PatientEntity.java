@@ -1,10 +1,13 @@
 package hospital.management.hospital_management.domain;
 
 
+import hospital.management.hospital_management.util.constant.AppointmentsTypeEnum;
 import hospital.management.hospital_management.util.constant.PatientStatusEnum;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.time.Instant;
 
 @Entity
 @Table(name="patients")
@@ -35,6 +38,11 @@ public class PatientEntity {
     @JoinColumn(name = "room_id")
     RoomEntity room;
 
+
+    Instant dateOfAppointment;
+
+    @Enumerated(EnumType.STRING)
+    AppointmentsTypeEnum appointmentsType;
 
 
 

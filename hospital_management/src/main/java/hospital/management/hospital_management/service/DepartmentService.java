@@ -85,19 +85,21 @@ public class DepartmentService {
         if(currentDepartment.getIsActive()==true && currentDepartment.getPatients().size()>0){
             throw new CustomException("Khoa "+currentDepartment.getDepartmentName() +" đang có bệnh nhân, không thể đóng");
         }
-        Set<DoctorEntity> doctors = currentDepartment.getDoctors();
-        for (DoctorEntity doctor : doctors) {
-            doctor.setDepartments(null);
+        if(currentDepartment.getIsActive()==false){
+            currentDepartment.setIsActive(true);
+        }else{
+            Set<DoctorEntity> doctors = currentDepartment.getDoctors();
+            for (DoctorEntity doctor : doctors) {
+                doctor.setDepartments(null);
+            }
+            Set<NurseEntity> nurses = currentDepartment.getNurses();
+            for (NurseEntity nurse : nurses) {
+                nurse.setDepartments(null);
+            }
+            this.doctorRepository.saveAll(doctors);
+            this.nurseRepository.saveAll(nurses);
+            currentDepartment.setIsActive(false);
         }
-        Set<NurseEntity> nurses = currentDepartment.getNurses();
-        for (NurseEntity nurse : nurses) {
-            nurse.setDepartments(null);
-        }
-        this.doctorRepository.saveAll(doctors);
-        this.nurseRepository.saveAll(nurses);
-        currentDepartment.setIsActive(false);
         this.departmentRepository.save(currentDepartment);
-
-
     }
 }
