@@ -13,6 +13,7 @@ import hospital.management.hospital_management.util.constant.PatientStatusEnum;
 import hospital.management.hospital_management.util.constant.RoleEnum;
 import hospital.management.hospital_management.util.error.CustomException;
 import hospital.management.hospital_management.util.secutiry.SecurityUtil;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -78,6 +79,7 @@ public class PatientService {
         this.patientRepository.save(currentPatient);
     }
 
+    @Transactional
     public PatienResponse updatePatient(PatientRequest patientRequest) throws CustomException {
         this.patientServiceHelper.checkValidInforUpdate(patientRequest);
         PatientEntity currentPatient=this.patientRepository.findById(patientRequest.getPatientId()).get();

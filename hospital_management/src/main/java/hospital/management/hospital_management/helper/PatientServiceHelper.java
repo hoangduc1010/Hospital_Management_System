@@ -1,10 +1,7 @@
 package hospital.management.hospital_management.helper;
 
 
-import hospital.management.hospital_management.domain.DepartmentEntity;
-import hospital.management.hospital_management.domain.PatientEntity;
-import hospital.management.hospital_management.domain.RoomEntity;
-import hospital.management.hospital_management.domain.UserEntity;
+import hospital.management.hospital_management.domain.*;
 import hospital.management.hospital_management.dto.request.PatientRequest;
 import hospital.management.hospital_management.dto.response.MedicalRecordResponse;
 import hospital.management.hospital_management.dto.response.PatienResponse;
@@ -54,9 +51,22 @@ public class PatientServiceHelper {
         if(patient.getRoom()!=null){
             patienResponse.setRoomNumber(patient.getRoom().getRoomNumber());
         }
+        if(patient.getMedicalRecord()!=null){
+            MedicalRecordEntity currentMedicalRecord=patient.getMedicalRecord();
+            MedicalRecordResponse medicalRecordResponse=new MedicalRecordResponse();
+            medicalRecordResponse.setId(currentMedicalRecord.getId());
+            medicalRecordResponse.setAllergies(currentMedicalRecord.getAllergies());
+            medicalRecordResponse.setMedicalHistory(currentMedicalRecord.getMedicalHistory());
+            medicalRecordResponse.setDiagnosis(currentMedicalRecord.getDiagnosis());
+            medicalRecordResponse.setSymptoms(currentMedicalRecord.getSymptoms());
+            medicalRecordResponse.setDoctorNote(currentMedicalRecord.getDoctorNote());
+            medicalRecordResponse.setTreatmentPlan(currentMedicalRecord.getTreatmentPlan());
+            patienResponse.setMedicalRecord(medicalRecordResponse);
+        }
 
         return patienResponse;
     }
+
     public Instant convertAppointmentDateToInstant(String dateOfAppointment){
         String dateString = dateOfAppointment;
 
