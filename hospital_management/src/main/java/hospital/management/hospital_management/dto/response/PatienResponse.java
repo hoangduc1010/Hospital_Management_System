@@ -25,4 +25,11 @@ public class PatienResponse {
     Instant dateOfAppointment;
 
     AppointmentsTypeEnum appointmentsType;
+
+    String roomNumber;
+
+    String departmentName;
+
+    MedicalRecordResponse medicalRecord;
+
 }

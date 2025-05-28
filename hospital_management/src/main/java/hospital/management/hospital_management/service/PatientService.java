@@ -1,12 +1,13 @@
 package hospital.management.hospital_management.service;
 
 
-import hospital.management.hospital_management.domain.PatientEntity;
-import hospital.management.hospital_management.domain.UserEntity;
+import hospital.management.hospital_management.domain.*;
 import hospital.management.hospital_management.dto.request.PatientRequest;
 import hospital.management.hospital_management.dto.response.PatienResponse;
 import hospital.management.hospital_management.helper.PatientServiceHelper;
+import hospital.management.hospital_management.repository.DepartmentRepository;
 import hospital.management.hospital_management.repository.PatientRepository;
+import hospital.management.hospital_management.repository.RoomRepository;
 import hospital.management.hospital_management.repository.UserRepository;
 import hospital.management.hospital_management.util.constant.PatientStatusEnum;
 import hospital.management.hospital_management.util.constant.RoleEnum;
@@ -24,6 +25,9 @@ public class PatientService {
     private final PatientServiceHelper patientServiceHelper;
     private final UserRepository userRepository;
     private final RoleService roleService;
+    private final DepartmentRepository departmentRepository;
+    private final RoomRepository roomRepository;
+    private final MedicalRecordService medicalRecordService;
     public PatienResponse takeAppointments(PatientRequest patientRequest) throws CustomException {
         String username=SecurityUtil.getEmailOfCurrentUser();
         UserEntity currentUser=this.userRepository.findByUsername(username);
@@ -63,5 +67,29 @@ public class PatientService {
 
 
 
+    }
+
+    public void changeStatusOfPatient(PatientRequest patientRequest) throws CustomException{
+        PatientEntity currentPatient=this.patientRepository.findById(patientRequest.getPatientId()).get();
+        if(currentPatient==null){
+            throw new CustomException("Không tìm thấy bệnh nhân");
+        }
+        currentPatient.setPatientStatus(patientRequest.getPatientStatus());
+        this.patientRepository.save(currentPatient);
+    }
+
+    public PatienResponse updatePatient(PatientRequest patientRequest) throws CustomException {
+        this.patientServiceHelper.checkValidInforUpdate(patientRequest);
+        PatientEntity currentPatient=this.patientRepository.findById(patientRequest.getPatientId()).get();
+        DepartmentEntity currentDepartment=this.departmentRepository.findById(patientRequest.getDepartmentId()).get();
+        RoomEntity currentRoom=this.roomRepository.findById(patientRequest.getRoomId()).get();
+        currentPatient.setPatientStatus(patientRequest.getPatientStatus());
+        currentPatient.setRoom(currentRoom);
+        currentPatient.setCurrentDepartment(currentDepartment);
+        MedicalRecordEntity currentMedical=this.medicalRecordService.saveMedicalRecordWithPatient(patientRequest);
+        currentPatient.setMedicalRecord(currentMedical);
+        this.patientRepository.save(currentPatient);
+        PatienResponse patienResponse=this.patientServiceHelper.convertToPatientResponse(currentPatient);
+        return patienResponse;
     }
 }

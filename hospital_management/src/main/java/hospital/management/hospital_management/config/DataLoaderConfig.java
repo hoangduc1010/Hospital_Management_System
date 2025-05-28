@@ -63,7 +63,7 @@ public class DataLoaderConfig implements CommandLineRunner {
                     "012349998",
                     hashPassword,
                     "hoangducadmin",
-                    6, true
+                    7, true
             );
         }
     }

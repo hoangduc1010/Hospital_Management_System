@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Set;
+
 
 @Entity
 @Table(name="rooms")
@@ -29,10 +31,8 @@ public class RoomEntity {
     @JoinColumn(name="department_id")
     DepartmentEntity deparmentRoom;
 
-    @OneToOne(mappedBy = "room")
-    PatientEntity patient;
+    @OneToMany(mappedBy = "room")
+    Set<PatientEntity> patients;
 
     Integer numberOfBeds;
-
-
 }

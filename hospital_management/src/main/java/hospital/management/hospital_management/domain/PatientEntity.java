@@ -24,6 +24,7 @@ public class PatientEntity {
     @Enumerated(EnumType.STRING)
     PatientStatusEnum patientStatus;
 
+    @Column(columnDefinition = "MEDIUMTEXT")
     String description;
 
     @ManyToOne
@@ -34,9 +35,12 @@ public class PatientEntity {
     @JoinColumn(name = "user_id")
     UserEntity user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "room_id")
     RoomEntity room;
+
+    @OneToOne
+    private MedicalRecordEntity medicalRecord;
 
 
     Instant dateOfAppointment;

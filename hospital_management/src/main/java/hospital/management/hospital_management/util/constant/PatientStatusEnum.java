@@ -7,6 +7,5 @@ public enum PatientStatusEnum {
     DISCHARGED,
     DECEASED,
     OUTPATIENT,
-    CANCEL,
     WAITING;
 }

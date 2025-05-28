@@ -32,6 +32,7 @@ public class UserResponse {
     Set<String> departmentNames;
 
     DoctorDiplomaEnum doctorDiploma;
+
     NurseDiplomaEnum nurseDiploma;
 
 }

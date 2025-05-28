@@ -9,6 +9,7 @@ import hospital.management.hospital_management.dto.response.UserResponse;
 import hospital.management.hospital_management.service.UserService;
 import hospital.management.hospital_management.util.annotation.ApiMessage;
 import hospital.management.hospital_management.util.annotation.RoleAccess;
+import hospital.management.hospital_management.util.constant.PatientStatusEnum;
 import hospital.management.hospital_management.util.constant.RoleEnum;
 import hospital.management.hospital_management.util.error.CustomException;
 import jakarta.validation.Valid;

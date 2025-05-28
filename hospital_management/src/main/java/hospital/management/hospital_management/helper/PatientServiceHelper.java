@@ -1,14 +1,22 @@
 package hospital.management.hospital_management.helper;
 
 
+import hospital.management.hospital_management.domain.DepartmentEntity;
 import hospital.management.hospital_management.domain.PatientEntity;
+import hospital.management.hospital_management.domain.RoomEntity;
 import hospital.management.hospital_management.domain.UserEntity;
 import hospital.management.hospital_management.dto.request.PatientRequest;
+import hospital.management.hospital_management.dto.response.MedicalRecordResponse;
 import hospital.management.hospital_management.dto.response.PatienResponse;
+import hospital.management.hospital_management.repository.DepartmentRepository;
+import hospital.management.hospital_management.repository.PatientRepository;
+import hospital.management.hospital_management.repository.RoomRepository;
 import hospital.management.hospital_management.util.constant.PatientStatusEnum;
 import hospital.management.hospital_management.util.error.CustomException;
 import hospital.management.hospital_management.util.secutiry.SecurityUtil;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -20,7 +28,10 @@ import java.time.format.DateTimeFormatter;
 @Component
 @RequiredArgsConstructor
 public class PatientServiceHelper {
-
+    private final RoomRepository roomRepository;
+    private final PatientRepository patientRepository;
+    private final DepartmentRepository departmentRepository;
+    private final ModelMapper modelMapper;
     public void checkValidAppointments(PatientRequest patientRequest) throws CustomException {
         if(patientRequest.getDateOfAppointment()==null){
             throw new CustomException("Ngày khám không được để trống");
@@ -37,6 +48,13 @@ public class PatientServiceHelper {
         patienResponse.setPhoneNumber(patient.getUser().getPhoneNumber());
         patienResponse.setDateOfAppointment(patient.getDateOfAppointment());
         patienResponse.setAppointmentsType(patient.getAppointmentsType());
+        if(patient.getCurrentDepartment()!=null){
+            patienResponse.setDepartmentName(patient.getCurrentDepartment().getDepartmentName());
+        }
+        if(patient.getRoom()!=null){
+            patienResponse.setRoomNumber(patient.getRoom().getRoomNumber());
+        }
+
         return patienResponse;
     }
     public Instant convertAppointmentDateToInstant(String dateOfAppointment){
@@ -57,6 +75,27 @@ public class PatientServiceHelper {
         }
         if(currentUser.getPatient()==null){
             throw new CustomException("Bạn chưa đặt lịch khám");
+        }
+    }
+
+    public void checkValidInforUpdate(PatientRequest patientRequest) throws CustomException{
+        PatientEntity currentPatient=this.patientRepository.findById(patientRequest.getPatientId()).get();
+        if(patientRequest.getPatientId()==null || currentPatient==null){
+            throw new CustomException("Người dùng không tồn tại");
+        }
+        RoomEntity currentRoom=this.roomRepository.findById(patientRequest.getRoomId()).get();
+        if(currentRoom==null){
+            throw new CustomException("Số phòng không tồn tại ");
+        }
+        if(currentRoom.getNumberOfBeds() <=0){
+            throw new CustomException("Số lượng giường của phòng "+currentRoom.getRoomNumber()+" đã hết");
+        }
+        DepartmentEntity currentDepartment=this.departmentRepository.findById(patientRequest.getDepartmentId()).get();
+        if(currentDepartment==null || currentDepartment.getIsActive()==false){
+            throw new CustomException("Khoa không tồn tại");
+        }
+        if(!currentDepartment.getRooms().contains(currentRoom)){
+            throw new CustomException("Khoa "+currentDepartment.getDepartmentName() + " không tồn tại phòng "+currentRoom.getRoomNumber());
         }
     }
 }
