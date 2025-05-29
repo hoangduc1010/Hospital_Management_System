@@ -37,7 +37,7 @@ public class DepartmentEntity {
     @OneToMany(mappedBy = "currentDepartment")
     Set<PatientEntity> patients;
 
-    @OneToMany(mappedBy = "deparmentRoom")
+    @OneToMany(mappedBy = "departmentRoom")
     Set<RoomEntity> rooms;
 
 

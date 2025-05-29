@@ -1,15 +1,19 @@
 package hospital.management.hospital_management.controller;
 
 
+import com.turkraft.springfilter.boot.Filter;
+import hospital.management.hospital_management.domain.PatientEntity;
 import hospital.management.hospital_management.dto.request.PatientRequest;
 import hospital.management.hospital_management.dto.response.PatienResponse;
+import hospital.management.hospital_management.dto.response.ResponsePaginationDTO;
 import hospital.management.hospital_management.service.PatientService;
 import hospital.management.hospital_management.util.annotation.ApiMessage;
 import hospital.management.hospital_management.util.annotation.RoleAccess;
-import hospital.management.hospital_management.util.constant.PatientStatusEnum;
 import hospital.management.hospital_management.util.constant.RoleEnum;
 import hospital.management.hospital_management.util.error.CustomException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,6 +51,14 @@ public class PatientController {
     @RoleAccess(allowedRoles = {RoleEnum.DOCTOR,RoleEnum.NURSE})
     public ResponseEntity<PatienResponse> updatePatient(@RequestBody PatientRequest patientRequest) throws CustomException {
         return ResponseEntity.ok().body(this.patientService.updatePatient(patientRequest));
+    }
+
+    @GetMapping("/find/all")
+    @ApiMessage("Lấy tất cả bệnh nhân")
+    @RoleAccess(allowedRoles = {RoleEnum.ADMIN,RoleEnum.DOCTOR,RoleEnum.NURSE})
+    public ResponseEntity<ResponsePaginationDTO> getAllPatient(@Filter Specification<PatientEntity> specification,
+                                                               Pageable pageable){
+        return ResponseEntity.ok().body(this.patientService.getAllPatient(specification,pageable));
     }
 
 

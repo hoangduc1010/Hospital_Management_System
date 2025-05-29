@@ -29,10 +29,12 @@ public class RoomEntity {
 
     @ManyToOne
     @JoinColumn(name="department_id")
-    DepartmentEntity deparmentRoom;
+    DepartmentEntity departmentRoom;
 
     @OneToMany(mappedBy = "room")
     Set<PatientEntity> patients;
 
     Integer numberOfBeds;
+
+    Boolean isActive;
 }

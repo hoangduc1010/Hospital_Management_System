@@ -69,7 +69,6 @@ public class PatientServiceHelper {
 
     public Instant convertAppointmentDateToInstant(String dateOfAppointment){
         String dateString = dateOfAppointment;
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
         LocalDateTime localDateTime = LocalDateTime.parse(dateString, formatter);
         Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
@@ -97,6 +96,9 @@ public class PatientServiceHelper {
         if(currentRoom==null){
             throw new CustomException("Số phòng không tồn tại ");
         }
+        if(currentRoom.getIsActive()==false){
+            throw new CustomException("Phòng khám "+currentRoom.getRoomNumber()+" đang dừng hoạt động");
+        }
         if(currentRoom.getNumberOfBeds() <=0){
             throw new CustomException("Số lượng giường của phòng "+currentRoom.getRoomNumber()+" đã hết");
         }
@@ -104,6 +106,7 @@ public class PatientServiceHelper {
         if(currentDepartment==null || currentDepartment.getIsActive()==false){
             throw new CustomException("Khoa không tồn tại");
         }
+
         if(!currentDepartment.getRooms().contains(currentRoom)){
             throw new CustomException("Khoa "+currentDepartment.getDepartmentName() + " không tồn tại phòng "+currentRoom.getRoomNumber());
         }

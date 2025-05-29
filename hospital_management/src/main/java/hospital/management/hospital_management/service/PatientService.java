@@ -4,6 +4,9 @@ package hospital.management.hospital_management.service;
 import hospital.management.hospital_management.domain.*;
 import hospital.management.hospital_management.dto.request.PatientRequest;
 import hospital.management.hospital_management.dto.response.PatienResponse;
+import hospital.management.hospital_management.dto.response.ResponsePaginationDTO;
+import hospital.management.hospital_management.dto.response.UserResponse;
+import hospital.management.hospital_management.helper.PaginationHelper;
 import hospital.management.hospital_management.helper.PatientServiceHelper;
 import hospital.management.hospital_management.repository.DepartmentRepository;
 import hospital.management.hospital_management.repository.PatientRepository;
@@ -15,9 +18,14 @@ import hospital.management.hospital_management.util.error.CustomException;
 import hospital.management.hospital_management.util.secutiry.SecurityUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +37,7 @@ public class PatientService {
     private final DepartmentRepository departmentRepository;
     private final RoomRepository roomRepository;
     private final MedicalRecordService medicalRecordService;
+    private final PaginationHelper paginationHelper;
     public PatienResponse takeAppointments(PatientRequest patientRequest) throws CustomException {
         String username=SecurityUtil.getEmailOfCurrentUser();
         UserEntity currentUser=this.userRepository.findByUsername(username);
@@ -93,5 +102,16 @@ public class PatientService {
         this.patientRepository.save(currentPatient);
         PatienResponse patienResponse=this.patientServiceHelper.convertToPatientResponse(currentPatient);
         return patienResponse;
+    }
+
+    public <T> ResponsePaginationDTO<T> getAllPatient(Specification specification, Pageable pageable) {
+        Page<T> patientPage = this.patientRepository.findAll(specification, pageable);
+        List<PatientEntity> patients= (List<PatientEntity>) patientPage.getContent();
+        List<PatienResponse> patienResponses=new ArrayList<>();
+        for(PatientEntity patient:patients){
+            PatienResponse patienResponse=this.patientServiceHelper.convertToPatientResponse(patient);
+            patienResponses.add(patienResponse);
+        }
+        return this.paginationHelper.getAllPagination(patientPage, (List<T>) patienResponses, pageable);
     }
 }
