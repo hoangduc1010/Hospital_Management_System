@@ -18,14 +18,12 @@ public class MedicalRecordService {
     private final ModelMapper modelMapper;
     public MedicalRecordEntity saveMedicalRecordWithPatient(PatientRequest patientRequest){
         PatientEntity currentPatient=this.patientRepository.findById(patientRequest.getPatientId()).get();
-        if(currentPatient.getMedicalRecord()==null){
-            MedicalRecordEntity currentMedicalRecord=currentPatient.getMedicalRecord();
-            currentMedicalRecord.setPatient(currentPatient);
-            currentPatient.setMedicalRecord(currentMedicalRecord);
-            modelMapper.map(patientRequest.getMedicalRecord(),currentMedicalRecord);
-            this.medicalRecordRepository.save(currentMedicalRecord);
-            return currentMedicalRecord;
-        }
-        return currentPatient.getMedicalRecord();
+        MedicalRecordEntity currentMedicalRecord=currentPatient.getMedicalRecord() == null ? new MedicalRecordEntity() : currentPatient.getMedicalRecord();
+        currentMedicalRecord.setPatient(currentPatient);
+        currentPatient.setMedicalRecord(currentMedicalRecord);
+        modelMapper.getConfiguration().setAmbiguityIgnored(true).setSkipNullEnabled(true);
+        modelMapper.map(patientRequest.getMedicalRecord(),currentMedicalRecord);
+        this.medicalRecordRepository.save(currentMedicalRecord);
+        return currentMedicalRecord;
     }
 }

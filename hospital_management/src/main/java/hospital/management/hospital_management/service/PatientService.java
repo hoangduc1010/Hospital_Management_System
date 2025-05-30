@@ -95,11 +95,18 @@ public class PatientService {
         DepartmentEntity currentDepartment=this.departmentRepository.findById(patientRequest.getDepartmentId()).get();
         RoomEntity currentRoom=this.roomRepository.findById(patientRequest.getRoomId()).get();
         currentPatient.setPatientStatus(patientRequest.getPatientStatus());
+        if(!currentPatient.getRoom().getRoomNumber().equals(currentRoom.getRoomNumber())){
+            RoomEntity oldRoom=currentPatient.getRoom();
+            oldRoom.setNumberOfBeds(oldRoom.getNumberOfBeds()+1);
+            this.roomRepository.save(oldRoom);
+            currentRoom.setNumberOfBeds(currentRoom.getNumberOfBeds()-1);
+        }
         currentPatient.setRoom(currentRoom);
         currentPatient.setCurrentDepartment(currentDepartment);
         MedicalRecordEntity currentMedical=this.medicalRecordService.saveMedicalRecordWithPatient(patientRequest);
         currentPatient.setMedicalRecord(currentMedical);
         this.patientRepository.save(currentPatient);
+        this.roomRepository.save(currentRoom);
         PatienResponse patienResponse=this.patientServiceHelper.convertToPatientResponse(currentPatient);
         return patienResponse;
     }

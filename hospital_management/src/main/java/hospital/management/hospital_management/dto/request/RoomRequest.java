@@ -1,14 +1,11 @@
 package hospital.management.hospital_management.dto.request;
 
 
-import hospital.management.hospital_management.domain.DepartmentEntity;
-import hospital.management.hospital_management.domain.PatientEntity;
+
 import hospital.management.hospital_management.util.constant.RoomTypeEnum;
-import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Set;
 
 @Getter
 @Setter
@@ -23,6 +20,8 @@ public class RoomRequest {
     RoomTypeEnum roomType;
 
     Long departmentId;
+
+    String filterDepartmentName;
 
     Integer numberOfBeds;
 }
