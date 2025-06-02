@@ -88,27 +88,42 @@ public class PatientServiceHelper {
     }
 
     public void checkValidInforUpdate(PatientRequest patientRequest) throws CustomException{
-        PatientEntity currentPatient=this.patientRepository.findById(patientRequest.getPatientId()).get();
-        if(patientRequest.getPatientId()==null || currentPatient==null){
-            throw new CustomException("Người dùng không tồn tại");
+        if(patientRequest.getPatientId()==null){
+            if(patientRequest.getPatientStatus()!=PatientStatusEnum.UNDER_TREATMENT){
+                throw new CustomException("Bệnh nhân chưa có hồ sơ cần có trạng thái đang điều trị");
+            }
+        }else{
+            return;
         }
-        RoomEntity currentRoom=this.roomRepository.findById(patientRequest.getRoomId()).get();
-        if(currentRoom==null){
-            throw new CustomException("Số phòng không tồn tại ");
+        PatientEntity currentPatient=new PatientEntity();
+        if(patientRequest.getPatientId()!=null){
+            currentPatient=this.patientRepository.findById(patientRequest.getPatientId()).get();
+            if(patientRequest.getPatientId()==null || currentPatient==null){
+                throw new CustomException("Người dùng không tồn tại");
+            }
         }
-        if(currentRoom.getIsActive()==false){
-            throw new CustomException("Phòng khám "+currentRoom.getRoomNumber()+" đang dừng hoạt động");
-        }
-        if(currentRoom.getNumberOfBeds() <=0){
-            throw new CustomException("Số lượng giường của phòng "+currentRoom.getRoomNumber()+" đã hết");
-        }
-        DepartmentEntity currentDepartment=this.departmentRepository.findById(patientRequest.getDepartmentId()).get();
-        if(currentDepartment==null || currentDepartment.getIsActive()==false){
-            throw new CustomException("Khoa không tồn tại");
+        if(patientRequest.getRoomId()!=null && currentPatient.getCurrentDepartment()!=null){
+            RoomEntity currentRoom=this.roomRepository.findById(patientRequest.getRoomId()).get();
+            if(currentRoom==null){
+                throw new CustomException("Số phòng không tồn tại ");
+            }
+            if(currentRoom.getIsActive()==false){
+                throw new CustomException("Phòng khám "+currentRoom.getRoomNumber()+" đang dừng hoạt động");
+            }
+            if(currentRoom.getNumberOfBeds() <=0){
+                throw new CustomException("Số lượng giường của phòng "+currentRoom.getRoomNumber()+" đã hết");
+            }
+            DepartmentEntity currentDepartment=this.departmentRepository.findById(patientRequest.getDepartmentId()).get();
+            if(currentDepartment==null || currentDepartment.getIsActive()==false){
+                throw new CustomException("Khoa không tồn tại");
+            }
+
+            if(!currentDepartment.getRooms().contains(currentRoom)){
+                throw new CustomException("Khoa "+currentDepartment.getDepartmentName() + " không tồn tại phòng "+currentRoom.getRoomNumber());
+            }
         }
 
-        if(!currentDepartment.getRooms().contains(currentRoom)){
-            throw new CustomException("Khoa "+currentDepartment.getDepartmentName() + " không tồn tại phòng "+currentRoom.getRoomNumber());
-        }
+
+
     }
 }

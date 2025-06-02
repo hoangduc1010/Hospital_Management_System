@@ -8,14 +8,15 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.Instant;
+import java.util.Set;
 
 @Entity
-@Table(name="patients")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
+    @Table(name="patients")
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PatientEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,6 +48,11 @@ public class PatientEntity {
 
     @Enumerated(EnumType.STRING)
     AppointmentsTypeEnum appointmentsType;
+
+
+    @OneToMany(mappedBy = "patientImages")
+    Set<PatientImagesEntity> images;
+
 
 
 

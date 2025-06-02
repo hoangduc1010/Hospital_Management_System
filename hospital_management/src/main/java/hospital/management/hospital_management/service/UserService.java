@@ -11,6 +11,7 @@ import hospital.management.hospital_management.repository.NurseRepository;
 import hospital.management.hospital_management.repository.UserRepository;
 import hospital.management.hospital_management.util.constant.RoleEnum;
 import hospital.management.hospital_management.util.error.CustomException;
+import hospital.management.hospital_management.util.secutiry.SecurityUtil;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
@@ -77,6 +78,8 @@ public class UserService {
 
     @Transactional
     public UserResponse updateUser(UserRequest userInfo) throws CustomException{
+        String currentUsernameLogin= SecurityUtil.getEmailOfCurrentUser();
+        UserEntity currentUserLogin=this.userRepository.findByUsername(currentUsernameLogin);
         if(userInfo.getUserId()==null){
             throw new CustomException("Id user không để trống");
         }
@@ -95,8 +98,10 @@ public class UserService {
             this.nurseRepository.deleteById(currentUser.getNurse().getId());
             currentUser.setNurse(null);
         }
-        RoleEnum roleEnum = RoleEnum.valueOf(userInfo.getRole().name().toUpperCase());
-        currentUser.setRole(this.roleService.findByRoleName(roleEnum));
+        if(currentUserLogin.getRole().equals(RoleEnum.ADMIN)){
+            RoleEnum roleEnum = RoleEnum.valueOf(userInfo.getRole().name().toUpperCase());
+            currentUser.setRole(this.roleService.findByRoleName(roleEnum));
+        }
         currentUser.setAddress(userInfo.getAddress());
         currentUser.setAvatar(userInfo.getAvatar());
         UserEntity savedUser=this.userRepository.save(currentUser);

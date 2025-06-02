@@ -8,10 +8,7 @@ import hospital.management.hospital_management.dto.response.ResponsePaginationDT
 import hospital.management.hospital_management.dto.response.UserResponse;
 import hospital.management.hospital_management.helper.PaginationHelper;
 import hospital.management.hospital_management.helper.PatientServiceHelper;
-import hospital.management.hospital_management.repository.DepartmentRepository;
-import hospital.management.hospital_management.repository.PatientRepository;
-import hospital.management.hospital_management.repository.RoomRepository;
-import hospital.management.hospital_management.repository.UserRepository;
+import hospital.management.hospital_management.repository.*;
 import hospital.management.hospital_management.util.constant.PatientStatusEnum;
 import hospital.management.hospital_management.util.constant.RoleEnum;
 import hospital.management.hospital_management.util.error.CustomException;
@@ -38,6 +35,7 @@ public class PatientService {
     private final RoomRepository roomRepository;
     private final MedicalRecordService medicalRecordService;
     private final PaginationHelper paginationHelper;
+    private final PatientImagesService patientImagesService;
     public PatienResponse takeAppointments(PatientRequest patientRequest) throws CustomException {
         String username=SecurityUtil.getEmailOfCurrentUser();
         UserEntity currentUser=this.userRepository.findByUsername(username);
@@ -88,9 +86,33 @@ public class PatientService {
         this.patientRepository.save(currentPatient);
     }
 
+    public PatienResponse emergencyPatient(PatientRequest patientRequest){
+        PatienResponse emergencyPatientResponse=new PatienResponse();
+        PatientEntity emercengyPatient=new PatientEntity();
+        UserEntity emergenyUser=new UserEntity();
+        RoleEnum roleEnum = RoleEnum.valueOf("PATIENT");
+        emergenyUser.setRole(this.roleService.findByRoleName(roleEnum));
+        RoomEntity currentRoom=this.roomRepository.findById(patientRequest.getRoomId()).get();
+        currentRoom.setNumberOfBeds(currentRoom.getNumberOfBeds()-1);
+        DepartmentEntity emergenyDepartment=this.departmentRepository.findById(patientRequest.getDepartmentId()).get();
+        this.userRepository.save(emergenyUser);
+        this.patientImagesService.savePatienImages(patientRequest,emercengyPatient);
+        emercengyPatient.setUser(emergenyUser);
+        emercengyPatient.setRoom(currentRoom);
+        emercengyPatient.setPatientStatus(PatientStatusEnum.UNDER_TREATMENT);
+        emercengyPatient.setCurrentDepartment(emergenyDepartment);
+        this.patientRepository.save(emercengyPatient);
+        emergencyPatientResponse=this.patientServiceHelper.convertToPatientResponse(emercengyPatient);
+        return emergencyPatientResponse;
+    }
+
     @Transactional
     public PatienResponse updatePatient(PatientRequest patientRequest) throws CustomException {
         this.patientServiceHelper.checkValidInforUpdate(patientRequest);
+        if(patientRequest.getPatientId()==null){
+            PatienResponse emergencyPatientResponse=emergencyPatient(patientRequest);
+            return emergencyPatientResponse;
+        }
         PatientEntity currentPatient=this.patientRepository.findById(patientRequest.getPatientId()).get();
         DepartmentEntity currentDepartment=this.departmentRepository.findById(patientRequest.getDepartmentId()).get();
         RoomEntity currentRoom=this.roomRepository.findById(patientRequest.getRoomId()).get();
@@ -101,6 +123,7 @@ public class PatientService {
             this.roomRepository.save(oldRoom);
             currentRoom.setNumberOfBeds(currentRoom.getNumberOfBeds()-1);
         }
+        this.patientImagesService.savePatienImages(patientRequest,currentPatient);
         currentPatient.setRoom(currentRoom);
         currentPatient.setCurrentDepartment(currentDepartment);
         MedicalRecordEntity currentMedical=this.medicalRecordService.saveMedicalRecordWithPatient(patientRequest);

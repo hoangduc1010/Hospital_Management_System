@@ -22,7 +22,9 @@ public class MedicalRecordService {
         currentMedicalRecord.setPatient(currentPatient);
         currentPatient.setMedicalRecord(currentMedicalRecord);
         modelMapper.getConfiguration().setAmbiguityIgnored(true).setSkipNullEnabled(true);
-        modelMapper.map(patientRequest.getMedicalRecord(),currentMedicalRecord);
+        if(patientRequest.getMedicalRecord()!=null){
+            modelMapper.map(patientRequest.getMedicalRecord(),currentMedicalRecord);
+        }
         this.medicalRecordRepository.save(currentMedicalRecord);
         return currentMedicalRecord;
     }

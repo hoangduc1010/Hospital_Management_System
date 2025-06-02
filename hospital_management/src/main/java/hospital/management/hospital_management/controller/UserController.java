@@ -36,6 +36,7 @@ public class UserController {
 
     @PutMapping
     @ApiMessage("Cập nhật người dùng")
+    @RoleAccess(allowedRoles = {RoleEnum.ADMIN,RoleEnum.DOCTOR,RoleEnum.NURSE})
     public ResponseEntity<UserResponse> updateUser(@RequestBody UserRequest userInfo) throws CustomException {
         return ResponseEntity.ok().body(this.userService.updateUser(userInfo));
     }

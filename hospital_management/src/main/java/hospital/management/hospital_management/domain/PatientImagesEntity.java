@@ -1,65 +1,31 @@
 package hospital.management.hospital_management.domain;
 
 
-import hospital.management.hospital_management.util.constant.GenderEnum;
 import hospital.management.hospital_management.util.secutiry.SecurityUtil;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.Instant;
 
 @Entity
-@Table(name="users")
+@Table(name="patient_images")
 @Getter
 @Setter
-@FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEntity {
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class PatientImagesEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    String fullname;
 
-    String username;
+    @ManyToOne
+    @JoinColumn(name="patient_id")
+    PatientEntity patientImages;
 
-    String password;
-
-    String phoneNumber;
-
-
-    String dob;
-
-    @Enumerated(EnumType.STRING)
-    GenderEnum gender;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="role_id")
-    RoleEntity role;
-
-    @OneToOne(mappedBy = "user")
-    DoctorEntity doctor;
-
-    @OneToOne(mappedBy = "user")
-    NurseEntity nurse;
-
-    @OneToOne(mappedBy = "user")
-    PatientEntity patient;
-
-    Boolean isActive;
-
-    String address;
-
-    String avatar;
-
-
-    @Column(columnDefinition = "MEDIUMTEXT")
-    String refreshToken;
+    String url;
 
     Instant createdAt;
 
@@ -83,6 +49,5 @@ public class UserEntity {
                 SecurityUtil.getCurrentUserLogin().get() : "";
 
     }
-
 
 }
