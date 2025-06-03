@@ -14,4 +14,6 @@ public class DepartmentRequest {
     String departmentName;
 
     String description;
+
+    Long departmentHeadId;
 }

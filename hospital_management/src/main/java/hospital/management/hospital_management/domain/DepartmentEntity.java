@@ -40,6 +40,9 @@ public class DepartmentEntity {
     @OneToMany(mappedBy = "departmentRoom")
     Set<RoomEntity> rooms;
 
+    @OneToOne
+    @JoinColumn(name="department_head_id",referencedColumnName = "id")
+    DoctorEntity departmentHead;
 
 
 }

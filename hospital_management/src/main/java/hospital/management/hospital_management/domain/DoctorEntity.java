@@ -41,6 +41,10 @@ public class DoctorEntity {
     )
     Set<DepartmentEntity> departments;
 
+    @OneToOne(mappedBy = "departmentHead")
+    DepartmentEntity manageDepartment;
+
+
 
 
 }

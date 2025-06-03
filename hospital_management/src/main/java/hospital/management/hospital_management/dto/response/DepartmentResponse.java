@@ -21,4 +21,6 @@ public class DepartmentResponse {
     Integer numberOfNurse;
 
     Integer numberOfPatient;
+
+    String departmentHeadName;
 }

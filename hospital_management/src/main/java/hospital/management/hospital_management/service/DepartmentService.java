@@ -11,6 +11,7 @@ import hospital.management.hospital_management.helper.PaginationHelper;
 import hospital.management.hospital_management.repository.DepartmentRepository;
 import hospital.management.hospital_management.repository.DoctorRepository;
 import hospital.management.hospital_management.repository.NurseRepository;
+import hospital.management.hospital_management.util.constant.RoleEnum;
 import hospital.management.hospital_management.util.error.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -48,21 +49,33 @@ public class DepartmentService {
         if(departmentRequest.getDepartmentName()==null){
             throw new CustomException("Tên khoa không được để trống");
         }
+        if(departmentRequest.getDepartmentHeadId()==null){
+            throw new CustomException("Thông tin trưởng khoa không được để trống");
+        }
         DepartmentEntity currentDepartment=this.departmentRepository.findByDepartmentNameIgnoreCase(departmentRequest.getDepartmentName());
         DepartmentResponse departmentResponse=new DepartmentResponse();
         if(currentDepartment!=null){
             throw new CustomException("Tên khoa đã bị trùng");
         }
+        DoctorEntity departmentHead=this.doctorRepository.findById(departmentRequest.getDepartmentHeadId()).get();
+        if(departmentHead==null || departmentHead.getManageDepartment()!=null){
+            throw new CustomException("Bác sĩ không tồn tại hoặc đã quản lí khoa khác");
+        }
         currentDepartment=new DepartmentEntity();
+        currentDepartment.setDepartmentHead(departmentHead);
         modelMapper.map(departmentRequest,currentDepartment);
         this.departmentRepository.save(currentDepartment);
-        modelMapper.map(currentDepartment,departmentResponse);
+        departmentResponse=this.departmentServiceHelper.convertToDepartmentResponse(currentDepartment);
         return departmentResponse;
     }
 
     public DepartmentResponse updateDepartment(DepartmentRequest departmentRequest) throws CustomException{
         if(departmentRequest.getDepartmentId()==null){
             throw new CustomException("Id của khoa không được bỏ trống");
+        }
+        DoctorEntity departmentHead=this.doctorRepository.findById(departmentRequest.getDepartmentHeadId()).get();
+        if(departmentHead==null || departmentHead.getManageDepartment()!=null){
+            throw new CustomException("Bác sĩ không tồn tại");
         }
         DepartmentEntity currentDepartment=this.departmentRepository.findById(departmentRequest.getDepartmentId()).get();
         DepartmentEntity anotherDepartment=this.departmentRepository.findByDepartmentNameIgnoreCase(departmentRequest.getDepartmentName());
@@ -73,7 +86,7 @@ public class DepartmentService {
         currentDepartment.setDepartmentName(departmentRequest.getDepartmentName());
         currentDepartment.setDescription(departmentRequest.getDescription());
         this.departmentRepository.save(currentDepartment);
-        modelMapper.map(currentDepartment,departmentResponse);
+        departmentResponse=this.departmentServiceHelper.convertToDepartmentResponse(currentDepartment);
         return departmentResponse;
     }
 
@@ -96,6 +109,7 @@ public class DepartmentService {
             for (NurseEntity nurse : nurses) {
                 nurse.setDepartments(null);
             }
+            currentDepartment.setDepartmentHead(null);
             this.doctorRepository.saveAll(doctors);
             this.nurseRepository.saveAll(nurses);
             currentDepartment.setIsActive(false);
