@@ -1,6 +1,7 @@
 package hospital.management.hospital_management.config;
 
 
+import hospital.management.hospital_management.domain.MedicineEntity;
 import hospital.management.hospital_management.repository.*;
 import hospital.management.hospital_management.util.constant.RoleEnum;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,8 @@ public class DataLoaderConfig implements CommandLineRunner {
     private NurseRepository nurseRepository;
     @Autowired
     private PatientRepository patientRepository;
+    @Autowired
+    private MedicineRepository medicineRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -42,6 +45,7 @@ public class DataLoaderConfig implements CommandLineRunner {
         insertDepartments();
         insertAdmin();
         insertPatient();
+        insertMedicine();
 
     }
 
@@ -111,6 +115,28 @@ public class DataLoaderConfig implements CommandLineRunner {
                             "  (10, 'Pathology', 'Analyzes lab samples to diagnose diseases.');\n"
 
                     );
+        }
+    }
+    public void insertMedicine(){
+        if(medicineRepository.count()==0){
+            jdbcTemplate.update(
+                    "INSERT INTO medicines (" +
+                            "medicine_name, active_ingredient, dosage_form, strength, unit, " +
+                            "quantity_in_stock, sell_price, purchase_price, manufacturer, " +
+                            "country_of_origin, notes, medicine_category) " +  // loại bỏ expiry_date
+                            "VALUES " +
+                            "('Amoxicillin', 'Amoxicillin', 'Tablet', '500mg', 'Tablet', '100', 1.5, 1.0, 'ABC Pharma', 'USA', 'Common antibiotic', 'ANTIBIOTIC')," +
+                            "('Paracetamol', 'Paracetamol', 'Tablet', '500mg', 'Tablet', '200', 0.8, 0.5, 'DEF Pharma', 'Germany', 'Pain relief', 'ANALGESIC')," +
+                            "('Ibuprofen', 'Ibuprofen', 'Capsule', '200mg', 'Capsule', '150', 1.2, 0.9, 'GHI Pharma', 'India', 'Anti-inflammatory', 'ANALGESIC')," +
+                            "('Oseltamivir', 'Oseltamivir', 'Capsule', '75mg', 'Capsule', '80', 2.5, 2.0, 'JKL Pharma', 'Switzerland', 'Antiviral treatment', 'ANTIVIRAL')," +
+                            "('Fluconazole', 'Fluconazole', 'Tablet', '150mg', 'Tablet', '120', 1.8, 1.3, 'MNO Pharma', 'UK', 'Anti-fungal', 'ANTIFUNGAL')," +
+                            "('Lisinopril', 'Lisinopril', 'Tablet', '10mg', 'Tablet', '90', 1.6, 1.1, 'PQR Pharma', 'France', 'Blood pressure control', 'ANTIHYPERTENSIVE')," +
+                            "('Metformin', 'Metformin', 'Tablet', '500mg', 'Tablet', '250', 0.9, 0.6, 'STU Pharma', 'India', 'Diabetes treatment', 'ANTIDIABETIC')," +
+                            "('Atorvastatin', 'Atorvastatin', 'Tablet', '20mg', 'Tablet', '130', 1.7, 1.2, 'VWX Pharma', 'USA', 'Cholesterol control', 'CARDIOVASCULAR')," +
+                            "('Omeprazole', 'Omeprazole', 'Capsule', '20mg', 'Capsule', '180', 1.1, 0.7, 'YZA Pharma', 'Vietnam', 'Stomach acid treatment', 'ANTACID')," +
+                            "('Hepatitis B Vaccine', 'HBsAg', 'Injection', '10mcg/ml', 'Vial', '70', 15.0, 10.0, 'BIO Pharma', 'Japan', 'Hepatitis B prevention', 'VACCINE');"
+            );
+
         }
     }
 
