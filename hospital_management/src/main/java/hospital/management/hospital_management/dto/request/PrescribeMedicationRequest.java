@@ -14,6 +14,5 @@ import java.util.Set;
 public class PrescribeMedicationRequest {
     Long patientId;
 
-
     Set<MedicineRequest> medicines;
 }

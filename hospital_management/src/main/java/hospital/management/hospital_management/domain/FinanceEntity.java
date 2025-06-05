@@ -1,6 +1,7 @@
 package hospital.management.hospital_management.domain;
 
 import hospital.management.hospital_management.util.constant.PaymentTypeEnum;
+import hospital.management.hospital_management.util.secutiry.SecurityUtil;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -25,12 +26,12 @@ public class FinanceEntity {
     @JoinColumn(name = "patient_id", nullable = false)
     PatientEntity patient;
 
-    Long otherCost;
+    Double otherCost;
 
     @Column(nullable = false)
-    Long totalCost;
+    Double totalCost;
 
-    Long insuranceCoverage;
+    Double insuranceCoverage;
 
     @Enumerated(EnumType.STRING)
     PaymentTypeEnum paymentType;
@@ -39,5 +40,12 @@ public class FinanceEntity {
 
     @OneToMany(mappedBy = "finance")
     Set<FinanceDetailEntity> financeDetails;
+
+    Boolean isPayment;
+
+    @PrePersist
+    public void billingDateBeforeCreated() {
+        this.billingDate=Instant.now();
+    }
 
 }

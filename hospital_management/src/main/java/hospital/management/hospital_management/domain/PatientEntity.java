@@ -60,6 +60,9 @@ public class PatientEntity {
     @OneToMany(mappedBy = "patient")
     Set<PatientMedicineEntity> prescriptions;
 
+    @OneToMany(mappedBy = "patient")
+    Set<FinanceEntity> financeSet;
+
 
 
 

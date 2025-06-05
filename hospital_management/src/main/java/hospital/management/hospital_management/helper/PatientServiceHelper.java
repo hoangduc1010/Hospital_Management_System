@@ -22,8 +22,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -149,12 +148,18 @@ public class PatientServiceHelper {
         }
     }
     public PrescribeMedicationResponse convertToPrescribeMedicationResponse(PrescribeMedicationRequest prescribeMedicationRequest){
-        PrescribeMedicationResponse prescribeMedicationResponse=new PrescribeMedicationResponse();
-        PatientEntity currentPatient=this.patientRepository.findById(prescribeMedicationRequest.getPatientId()).get();
-        prescribeMedicationResponse.setPatientId(currentPatient.getId());
-        prescribeMedicationResponse.setPatientName(currentPatient.getUser().getFullname());
-//        Set<MedicineResponse> medicineResponses=new HashSet<>();
-//        prescribeMedicationResponse.setMedicines(medicineResponses);
+       PrescribeMedicationResponse prescribeMedicationResponse=new PrescribeMedicationResponse();
+       PatientEntity currentPatient=this.patientRepository.findById(prescribeMedicationRequest.getPatientId()).get();
+       prescribeMedicationResponse.setPatientId(currentPatient.getId());
+       prescribeMedicationResponse.setPatientName(currentPatient.getUser().getFullname());
+        List<Map<String, Object>> medicines = new ArrayList<>();
+        for (MedicineRequest req : prescribeMedicationRequest.getMedicines()) {
+            Map<String, Object> medicineData = new HashMap<>();
+            medicineData.put("medicineName", req.getMedicineName());
+            medicineData.put("quantity", req.getQuantity());
+            medicines.add(medicineData);
+        }
+        prescribeMedicationResponse.setMedicines(medicines);
         return prescribeMedicationResponse;
     }
 }

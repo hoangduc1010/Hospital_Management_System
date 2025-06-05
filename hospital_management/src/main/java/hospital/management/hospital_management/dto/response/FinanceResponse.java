@@ -6,6 +6,7 @@ import hospital.management.hospital_management.util.constant.PaymentTypeEnum;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import java.time.Instant;
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,4 +23,10 @@ public class FinanceResponse {
     PaymentTypeEnum paymentType;
 
     Instant billingDate;
+
+    Instant timeOfAdmission;
+
+    Instant timeOfDischarge;
+
+    List<FinanceDetailResponse> financeDetailResponse;
 }

@@ -1,18 +1,19 @@
 package hospital.management.hospital_management.dto.response;
 
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import java.util.List;
-import java.util.Map;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PrescribeMedicationResponse {
-    Long patientId;
-    String patientName;
-    private List<Map<String, Object>> medicines;
+public class FinanceDetailResponse {
 
+    String medicineName;
+
+    Integer medicineQuantity;
+
+    Double subtotal;
 }

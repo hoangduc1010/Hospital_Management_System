@@ -156,13 +156,14 @@ public class PatientService {
     public PrescribeMedicationResponse prescribeMedication(PrescribeMedicationRequest prescribeMedicationRequest) throws CustomException{
         this.patientServiceHelper.checkValidInfoPrescribeMedication(prescribeMedicationRequest);
         PatientEntity currentPatient=this.patientRepository.findById(prescribeMedicationRequest.getPatientId()).get();
-        PatientMedicineEntity currentPatientMedicine=new PatientMedicineEntity();
-        currentPatientMedicine.setPatient(currentPatient);
         Set<MedicineEntity> medicines=new HashSet<>();
         for(MedicineRequest medicine:prescribeMedicationRequest.getMedicines()){
+            PatientMedicineEntity currentPatientMedicine=new PatientMedicineEntity();
+            currentPatientMedicine.setPatient(currentPatient);
             MedicineEntity currentMedicine=this.medicineRepository.findByMedicineName(medicine.getMedicineName().trim());
             currentPatientMedicine.setMedicine(currentMedicine);
             currentPatientMedicine.setQuantity(medicine.getQuantity());
+            currentPatientMedicine.setIsPayment(false);
             Integer remainQuantity=currentMedicine.getQuantityInStock()-medicine.getQuantity();
             currentMedicine.setQuantityInStock(remainQuantity);
             this.medicineRepository.save(currentMedicine);
