@@ -6,6 +6,7 @@ import hospital.management.hospital_management.util.constant.PatientStatusEnum;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.Instant;
 import java.util.Set;
 
 @Getter
@@ -29,5 +30,9 @@ public class PatientRequest {
     MedicalRecordRequest medicalRecord;
 
     Set<String> patientImages;
+
+    Instant timeOfAdmission;
+
+
 
 }

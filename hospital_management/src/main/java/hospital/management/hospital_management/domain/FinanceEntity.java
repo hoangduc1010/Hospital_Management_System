@@ -19,18 +19,18 @@ public class FinanceEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-     Long financeId;
+    Long financeId;
 
     @ManyToOne
     @JoinColumn(name = "patient_id", nullable = false)
     PatientEntity patient;
 
+    Long otherCost;
+
     @Column(nullable = false)
     Long totalCost;
 
     Long insuranceCoverage;
-
-    Long patientPay;
 
     @Enumerated(EnumType.STRING)
     PaymentTypeEnum paymentType;

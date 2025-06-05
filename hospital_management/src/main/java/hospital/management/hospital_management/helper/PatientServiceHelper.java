@@ -2,25 +2,28 @@ package hospital.management.hospital_management.helper;
 
 
 import hospital.management.hospital_management.domain.*;
+import hospital.management.hospital_management.dto.request.MedicineRequest;
 import hospital.management.hospital_management.dto.request.PatientRequest;
+import hospital.management.hospital_management.dto.request.PrescribeMedicationRequest;
 import hospital.management.hospital_management.dto.response.MedicalRecordResponse;
+import hospital.management.hospital_management.dto.response.MedicineResponse;
 import hospital.management.hospital_management.dto.response.PatienResponse;
+import hospital.management.hospital_management.dto.response.PrescribeMedicationResponse;
 import hospital.management.hospital_management.repository.DepartmentRepository;
+import hospital.management.hospital_management.repository.MedicineRepository;
 import hospital.management.hospital_management.repository.PatientRepository;
 import hospital.management.hospital_management.repository.RoomRepository;
 import hospital.management.hospital_management.util.constant.PatientStatusEnum;
 import hospital.management.hospital_management.util.error.CustomException;
-import hospital.management.hospital_management.util.secutiry.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
-
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -29,6 +32,7 @@ public class PatientServiceHelper {
     private final PatientRepository patientRepository;
     private final DepartmentRepository departmentRepository;
     private final ModelMapper modelMapper;
+    private final MedicineRepository medicineRepository;
     public void checkValidAppointments(PatientRequest patientRequest) throws CustomException {
         if(patientRequest.getDateOfAppointment()==null){
             throw new CustomException("Ngày khám không được để trống");
@@ -125,5 +129,32 @@ public class PatientServiceHelper {
 
 
 
+    }
+
+    public void checkValidInfoPrescribeMedication(PrescribeMedicationRequest prescribeMedicationRequest) throws CustomException{
+        if(prescribeMedicationRequest.getPatientId()==null){
+            throw new CustomException("Id bệnh nhân không để trống");
+        }
+        if(prescribeMedicationRequest.getMedicines()==null){
+            throw new CustomException("Danh sách thuốc không để trống");
+        }
+        for(MedicineRequest medicine:prescribeMedicationRequest.getMedicines()){
+            MedicineEntity currentMedicine=this.medicineRepository.findByMedicineName(medicine.getMedicineName());
+            if(currentMedicine==null || currentMedicine.getIsActive() ==false){
+                throw new CustomException("Thuốc "+medicine.getMedicineName()+ " không tồn tại");
+            }
+            if(currentMedicine.getQuantityInStock()<=0){
+                throw new CustomException("Thuốc "+currentMedicine.getMedicineName()+" đã hết");
+            }
+        }
+    }
+    public PrescribeMedicationResponse convertToPrescribeMedicationResponse(PrescribeMedicationRequest prescribeMedicationRequest){
+        PrescribeMedicationResponse prescribeMedicationResponse=new PrescribeMedicationResponse();
+        PatientEntity currentPatient=this.patientRepository.findById(prescribeMedicationRequest.getPatientId()).get();
+        prescribeMedicationResponse.setPatientId(currentPatient.getId());
+        prescribeMedicationResponse.setPatientName(currentPatient.getUser().getFullname());
+//        Set<MedicineResponse> medicineResponses=new HashSet<>();
+//        prescribeMedicationResponse.setMedicines(medicineResponses);
+        return prescribeMedicationResponse;
     }
 }

@@ -4,7 +4,9 @@ package hospital.management.hospital_management.controller;
 import com.turkraft.springfilter.boot.Filter;
 import hospital.management.hospital_management.domain.PatientEntity;
 import hospital.management.hospital_management.dto.request.PatientRequest;
+import hospital.management.hospital_management.dto.request.PrescribeMedicationRequest;
 import hospital.management.hospital_management.dto.response.PatienResponse;
+import hospital.management.hospital_management.dto.response.PrescribeMedicationResponse;
 import hospital.management.hospital_management.dto.response.ResponsePaginationDTO;
 import hospital.management.hospital_management.service.PatientService;
 import hospital.management.hospital_management.util.annotation.ApiMessage;
@@ -12,6 +14,7 @@ import hospital.management.hospital_management.util.annotation.RoleAccess;
 import hospital.management.hospital_management.util.constant.RoleEnum;
 import hospital.management.hospital_management.util.error.CustomException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Role;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
@@ -59,6 +62,13 @@ public class PatientController {
     public ResponseEntity<ResponsePaginationDTO> getAllPatient(@Filter Specification<PatientEntity> specification,
                                                                Pageable pageable){
         return ResponseEntity.ok().body(this.patientService.getAllPatient(specification,pageable));
+    }
+
+    @PostMapping("/prescribe_medication")
+    @ApiMessage("Kê thuốc cho bệnh nhân")
+    @RoleAccess(allowedRoles = {RoleEnum.DOCTOR})
+    public ResponseEntity<PrescribeMedicationResponse> prescribeMedicationForPatient(@RequestBody PrescribeMedicationRequest prescribeMedicationRequest) throws CustomException{
+        return ResponseEntity.ok().body(this.patientService.prescribeMedication(prescribeMedicationRequest));
     }
 
 

@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.Instant;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -48,4 +49,12 @@ public class MedicineEntity {
     MedicineCategoryEnum medicineCategory;
 
     Boolean isActive;
+
+    @ManyToMany(mappedBy = "medicineSet")
+    Set<FinanceDetailEntity> financeDetailSet;
+
+    @OneToMany(mappedBy = "medicine")
+    Set<PatientMedicineEntity> prescriptions;
+
+
 }

@@ -27,7 +27,7 @@ public class MedicineRequest {
 
     String unit;
 
-    Integer quantityInStock;
+    Integer quantity;
 
     Double sellPrice;
 

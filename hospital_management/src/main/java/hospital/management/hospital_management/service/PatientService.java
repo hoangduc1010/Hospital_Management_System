@@ -2,8 +2,11 @@ package hospital.management.hospital_management.service;
 
 
 import hospital.management.hospital_management.domain.*;
+import hospital.management.hospital_management.dto.request.MedicineRequest;
 import hospital.management.hospital_management.dto.request.PatientRequest;
+import hospital.management.hospital_management.dto.request.PrescribeMedicationRequest;
 import hospital.management.hospital_management.dto.response.PatienResponse;
+import hospital.management.hospital_management.dto.response.PrescribeMedicationResponse;
 import hospital.management.hospital_management.dto.response.ResponsePaginationDTO;
 import hospital.management.hospital_management.dto.response.UserResponse;
 import hospital.management.hospital_management.helper.PaginationHelper;
@@ -22,7 +25,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +41,8 @@ public class PatientService {
     private final MedicalRecordService medicalRecordService;
     private final PaginationHelper paginationHelper;
     private final PatientImagesService patientImagesService;
+    private final MedicineRepository medicineRepository;
+    private final PatientMedicineRepository patientMedicineRepository;
     public PatienResponse takeAppointments(PatientRequest patientRequest) throws CustomException {
         String username=SecurityUtil.getEmailOfCurrentUser();
         UserEntity currentUser=this.userRepository.findByUsername(username);
@@ -125,6 +132,7 @@ public class PatientService {
         }
         this.patientImagesService.savePatienImages(patientRequest,currentPatient);
         currentPatient.setRoom(currentRoom);
+        currentPatient.setTimeOfAdmission(patientRequest.getTimeOfAdmission());
         currentPatient.setCurrentDepartment(currentDepartment);
         MedicalRecordEntity currentMedical=this.medicalRecordService.saveMedicalRecordWithPatient(patientRequest);
         currentPatient.setMedicalRecord(currentMedical);
@@ -143,5 +151,25 @@ public class PatientService {
             patienResponses.add(patienResponse);
         }
         return this.paginationHelper.getAllPagination(patientPage, (List<T>) patienResponses, pageable);
+    }
+
+    public PrescribeMedicationResponse prescribeMedication(PrescribeMedicationRequest prescribeMedicationRequest) throws CustomException{
+        this.patientServiceHelper.checkValidInfoPrescribeMedication(prescribeMedicationRequest);
+        PatientEntity currentPatient=this.patientRepository.findById(prescribeMedicationRequest.getPatientId()).get();
+        PatientMedicineEntity currentPatientMedicine=new PatientMedicineEntity();
+        currentPatientMedicine.setPatient(currentPatient);
+        Set<MedicineEntity> medicines=new HashSet<>();
+        for(MedicineRequest medicine:prescribeMedicationRequest.getMedicines()){
+            MedicineEntity currentMedicine=this.medicineRepository.findByMedicineName(medicine.getMedicineName().trim());
+            currentPatientMedicine.setMedicine(currentMedicine);
+            currentPatientMedicine.setQuantity(medicine.getQuantity());
+            Integer remainQuantity=currentMedicine.getQuantityInStock()-medicine.getQuantity();
+            currentMedicine.setQuantityInStock(remainQuantity);
+            this.medicineRepository.save(currentMedicine);
+            this.patientMedicineRepository.save(currentPatientMedicine);
+        }
+        PrescribeMedicationResponse prescribeMedicationResponse=this.patientServiceHelper.convertToPrescribeMedicationResponse(prescribeMedicationRequest);
+        return prescribeMedicationResponse;
+
     }
 }

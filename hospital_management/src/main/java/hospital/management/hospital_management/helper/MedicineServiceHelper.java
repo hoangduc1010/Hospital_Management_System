@@ -27,7 +27,7 @@ public class MedicineServiceHelper {
         if(currentMedicine!=null){
             throw new CustomException("Thuốc đã tồn tại trong kho");
         }
-        if(medicineRequest.getQuantityInStock()!=null && medicineRequest.getQuantityInStock()<=0){
+        if(medicineRequest.getQuantity()!=null && medicineRequest.getQuantity()<=0){
             throw new CustomException("Số lượng cần phải lớn hơn 0");
         }
         if(medicineRequest.getPurchasePrice() <=0 && medicineRequest.getPurchasePrice()!=null){

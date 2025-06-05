@@ -53,6 +53,16 @@ public class PatientEntity {
     @OneToMany(mappedBy = "patientImages")
     Set<PatientImagesEntity> images;
 
+    Instant timeOfAdmission;
+
+    Instant timeOfDischarge;
+
+    @OneToMany(mappedBy = "patient")
+    Set<PatientMedicineEntity> prescriptions;
+
+
+
+
 
 
 

@@ -1,10 +1,11 @@
 package hospital.management.hospital_management.domain;
 
+import hospital.management.hospital_management.util.constant.AppointmentsTypeEnum;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.Set;
 
 @Entity
 @Table(name = "finance_details")
@@ -23,11 +24,16 @@ public class FinanceDetailEntity {
     @JoinColumn(name = "finance_id", nullable = false)
     FinanceEntity finance;
 
-    private Long unitPrice;
+    @ManyToMany
+    @JoinTable(name="finance_medicine",
+    joinColumns = @JoinColumn(name="finance_detail_id"),
+    inverseJoinColumns = @JoinColumn(name="medicine_id"))
+    Set<MedicineEntity> medicineSet;
 
-    private Integer quantity;
+    @Enumerated(EnumType.STRING)
+    AppointmentsTypeEnum appointmentsType;
 
-    private Long subtotal;
+
 
 
 }
