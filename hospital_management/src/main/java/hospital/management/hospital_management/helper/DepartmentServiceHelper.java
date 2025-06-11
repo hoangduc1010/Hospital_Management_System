@@ -27,7 +27,9 @@ public class DepartmentServiceHelper {
         if(departmentEntity.getPatients()!=null){
             departmentResponse.setNumberOfPatient(departmentEntity.getPatients().size());
         }
-        departmentResponse.setDepartmentHeadName(departmentEntity.getDepartmentHead().getUser().getFullname());
+        if(departmentEntity.getDepartmentHead()!=null){
+            departmentResponse.setDepartmentHeadName(departmentEntity.getDepartmentHead().getUser().getFullname());
+        }
         return departmentResponse;
     }
 }

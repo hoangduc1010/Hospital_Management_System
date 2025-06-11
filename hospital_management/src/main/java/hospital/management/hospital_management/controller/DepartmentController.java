@@ -17,6 +17,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/departments")
@@ -52,6 +54,13 @@ public class DepartmentController {
     public ResponseEntity<Void> deleteDepartment(@PathVariable Long departmentId) throws CustomException{
         this.departmentService.changeActiveDepartment(departmentId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/find/{departmentName}")
+    @ApiMessage("Tìm khoa theo tên")
+    @RoleAccess(allowedRoles = {RoleEnum.DOCTOR,RoleEnum.NURSE,RoleEnum.ACCOUNTANT,RoleEnum.RECEPTIONIST,RoleEnum.ADMIN})
+    public ResponseEntity<List<DepartmentResponse>> getDepartmentByDepartmentName(@PathVariable String departmentName) throws CustomException{
+        return ResponseEntity.ok().body(this.departmentService.getDepartmentsByDepartmentname(departmentName));
     }
 
 }

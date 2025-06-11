@@ -116,4 +116,19 @@ public class DepartmentService {
         }
         this.departmentRepository.save(currentDepartment);
     }
+
+    public List<DepartmentResponse> getDepartmentsByDepartmentname(String departmentName) throws CustomException{
+        List<DepartmentEntity> departmentEntities=this.departmentRepository.findByDepartmentNameContaining(departmentName);
+        if(departmentEntities.size()==0){
+            throw new CustomException("Không có khoa nào tên "+departmentName);
+        }
+        List<DepartmentResponse> departmentResponses=new ArrayList<>();
+        for(DepartmentEntity department:departmentEntities){
+            DepartmentResponse departmentResponse=new DepartmentResponse();
+            departmentResponse=this.departmentServiceHelper.convertToDepartmentResponse(department);
+            departmentResponses.add(departmentResponse);
+        }
+        return departmentResponses;
+
+    }
 }
