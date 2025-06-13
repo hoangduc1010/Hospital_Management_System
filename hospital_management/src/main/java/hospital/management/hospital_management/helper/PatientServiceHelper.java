@@ -146,6 +146,17 @@ public class PatientServiceHelper {
                 throw new CustomException("Thuốc "+currentMedicine.getMedicineName()+" đã hết");
             }
         }
+        PatientEntity currentPatient=this.patientRepository.findById(prescribeMedicationRequest.getPatientId()).get();
+        if(!((currentPatient.getPatientStatus().equals(PatientStatusEnum.ADMITTED)) ||
+                currentPatient.getPatientStatus().equals(PatientStatusEnum.UNDER_TREATMENT) ||
+                currentPatient.getPatientStatus().equals(PatientStatusEnum.OUTPATIENT))){
+            throw new CustomException("Bệnh nhân có trạng thái "+currentPatient.getPatientStatus()+" không thể kê thuốc");
+        }
+        for(FinanceEntity finance:currentPatient.getFinanceSet()){
+            if(finance.getIsPayment()==false){
+                throw new CustomException("Bạn có hoá đơn chưa thanh toán nên không thể thực hiện kê thuốc");
+            }
+        }
     }
     public PrescribeMedicationResponse convertToPrescribeMedicationResponse(PrescribeMedicationRequest prescribeMedicationRequest){
        PrescribeMedicationResponse prescribeMedicationResponse=new PrescribeMedicationResponse();

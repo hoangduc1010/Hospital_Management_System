@@ -43,6 +43,7 @@ public class PatientService {
     private final PatientImagesService patientImagesService;
     private final MedicineRepository medicineRepository;
     private final PatientMedicineRepository patientMedicineRepository;
+    private final FinanceRepository financeRepository;
     public PatienResponse takeAppointments(PatientRequest patientRequest) throws CustomException {
         String username=SecurityUtil.getEmailOfCurrentUser();
         UserEntity currentUser=this.userRepository.findByUsername(username);
@@ -157,6 +158,14 @@ public class PatientService {
         this.patientServiceHelper.checkValidInfoPrescribeMedication(prescribeMedicationRequest);
         PatientEntity currentPatient=this.patientRepository.findById(prescribeMedicationRequest.getPatientId()).get();
         Set<MedicineEntity> medicines=new HashSet<>();
+        Set<FinanceEntity> finances=new HashSet<>();
+        finances.add(new FinanceEntity());
+        for(FinanceEntity finance:finances){
+            finance.setPatient(currentPatient);
+            finance.setIsPayment(false);
+        }
+        this.financeRepository.saveAll(finances);
+        currentPatient.setFinanceSet(finances);
         for(MedicineRequest medicine:prescribeMedicationRequest.getMedicines()){
             PatientMedicineEntity currentPatientMedicine=new PatientMedicineEntity();
             currentPatientMedicine.setPatient(currentPatient);

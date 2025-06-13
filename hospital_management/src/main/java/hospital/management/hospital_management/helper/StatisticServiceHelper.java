@@ -2,15 +2,20 @@ package hospital.management.hospital_management.helper;
 
 import hospital.management.hospital_management.domain.DepartmentEntity;
 import hospital.management.hospital_management.domain.DoctorEntity;
+import hospital.management.hospital_management.domain.FinanceEntity;
 import hospital.management.hospital_management.domain.NurseEntity;
 import hospital.management.hospital_management.dto.response.DoctorNurseActiveResponse;
 import hospital.management.hospital_management.dto.response.NumberOfDoctorAndNurseActive;
+import hospital.management.hospital_management.dto.response.TotalCostIndayResponse;
 import hospital.management.hospital_management.repository.DoctorRepository;
 import hospital.management.hospital_management.repository.NurseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,5 +62,17 @@ public class StatisticServiceHelper {
         }
         return doctorNurseActiveResponses;
 
+    }
+
+    public TotalCostIndayResponse convertToTotalCostInDayResponse(List<FinanceEntity> financeInDay){
+        TotalCostIndayResponse totalCostIndayResponse=new TotalCostIndayResponse();
+        Double totalCostInDay=0.0;
+        for(FinanceEntity finance:financeInDay){
+            totalCostInDay=totalCostInDay+finance.getTotalCost();
+        }
+        totalCostIndayResponse.setTotalCost(totalCostInDay);
+        String today= LocalDate.now().toString();
+        totalCostIndayResponse.setDate(today);
+        return totalCostIndayResponse;
     }
 }

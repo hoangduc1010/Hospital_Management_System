@@ -29,8 +29,13 @@ public class FinanceService {
 
 
         this.financeServiceHelper.checkValidInfoCreateFinance(financeRequest);
-        FinanceEntity currentFinanceEntity=new FinanceEntity();
+
         PatientEntity currentPatient=this.patientRepository.findById(financeRequest.getPatientId()).get();
+        FinanceEntity currentFinanceEntity = currentPatient.getFinanceSet()
+                .stream()
+                .filter(f -> !f.getIsPayment())
+                .findFirst()
+                .orElse(null);
         currentFinanceEntity.setPatient(currentPatient);
         FinanceDetailEntity currentFinanceDetailEntity=new FinanceDetailEntity();
         Set<MedicineEntity> medicineEntitySet=new HashSet<>();

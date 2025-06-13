@@ -28,7 +28,6 @@ public class FinanceEntity {
 
     Double otherCost;
 
-    @Column(nullable = false)
     Double totalCost;
 
     Double insuranceCoverage;
