@@ -1,21 +1,14 @@
 package hospital.management.hospital_management.helper;
 
-import hospital.management.hospital_management.domain.DepartmentEntity;
-import hospital.management.hospital_management.domain.DoctorEntity;
-import hospital.management.hospital_management.domain.FinanceEntity;
-import hospital.management.hospital_management.domain.NurseEntity;
-import hospital.management.hospital_management.dto.response.DoctorNurseActiveResponse;
-import hospital.management.hospital_management.dto.response.NumberOfDoctorAndNurseActive;
-import hospital.management.hospital_management.dto.response.TotalCostIndayResponse;
+import hospital.management.hospital_management.domain.*;
+import hospital.management.hospital_management.dto.request.TotalCostFromDateToRequest;
+import hospital.management.hospital_management.dto.response.*;
 import hospital.management.hospital_management.repository.DoctorRepository;
 import hospital.management.hospital_management.repository.NurseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,10 +57,10 @@ public class StatisticServiceHelper {
 
     }
 
-    public TotalCostIndayResponse convertToTotalCostInDayResponse(List<FinanceEntity> financeInDay){
+    public TotalCostIndayResponse convertToTotalCostInDayResponse(List<FinancePatientEntity> financeInDay){
         TotalCostIndayResponse totalCostIndayResponse=new TotalCostIndayResponse();
         Double totalCostInDay=0.0;
-        for(FinanceEntity finance:financeInDay){
+        for(FinancePatientEntity finance:financeInDay){
             totalCostInDay=totalCostInDay+finance.getTotalCost();
         }
         totalCostIndayResponse.setTotalCost(totalCostInDay);
@@ -75,4 +68,21 @@ public class StatisticServiceHelper {
         totalCostIndayResponse.setDate(today);
         return totalCostIndayResponse;
     }
+
+    public TotalCostFromDateToResponse convertToTotalCostFromDateToResponse(List<FinancePatientEntity> financeInDay, TotalCostFromDateToRequest totalCostFromDateToRequest){
+        TotalCostFromDateToResponse totalCostFromDateToResponse=new TotalCostFromDateToResponse();
+        Double totalCostFromDateTo=0.0;
+        for(FinancePatientEntity finance:financeInDay){
+            totalCostFromDateTo=totalCostFromDateTo+finance.getTotalCost();
+        }
+        if(totalCostFromDateToRequest.getStartDate()!=null){
+            totalCostFromDateToResponse.setFromDate(totalCostFromDateToRequest.getStartDate());
+        }
+        if(totalCostFromDateToRequest.getEndDate()!=null){
+            totalCostFromDateToResponse.setToDate(totalCostFromDateToRequest.getEndDate());
+        }
+        totalCostFromDateToResponse.setTotalCost(totalCostFromDateTo);
+        return totalCostFromDateToResponse;
+    }
+
 }

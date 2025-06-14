@@ -1,15 +1,20 @@
 package hospital.management.hospital_management.controller;
 
 
+import hospital.management.hospital_management.dto.request.TotalCostFromDateToRequest;
 import hospital.management.hospital_management.dto.response.DoctorNurseActiveResponse;
+import hospital.management.hospital_management.dto.response.TotalCostFromDateToResponse;
 import hospital.management.hospital_management.dto.response.TotalCostIndayResponse;
+import hospital.management.hospital_management.dto.response.TotalPatientInDayResponse;
 import hospital.management.hospital_management.service.StatisticService;
 import hospital.management.hospital_management.util.annotation.ApiMessage;
 import hospital.management.hospital_management.util.annotation.RoleAccess;
 import hospital.management.hospital_management.util.constant.RoleEnum;
+import hospital.management.hospital_management.util.error.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,8 +34,21 @@ public class StatisticController {
     }
 
     @GetMapping("/total_cost_today")
-    @ApiMessage("Thống kế tổng chi phí hôm nay")
+    @ApiMessage("Thống kế tổng chi phí thu về hôm nay")
     public ResponseEntity<TotalCostIndayResponse> statisticTotalCostInDay(){
         return ResponseEntity.ok().body(this.statisticService.getTotalCostInDay());
     }
+
+    @GetMapping("/total_cost_from_to")
+    @ApiMessage("Thống kê tổng chi phí thu về trong khoảng ngày")
+    public ResponseEntity<TotalCostFromDateToResponse> statisticTotalCostFromDateTo(@RequestBody TotalCostFromDateToRequest totalCostFromDateToRequest) throws CustomException {
+        return ResponseEntity.ok().body(this.statisticService.getTotalCostFromDateTo(totalCostFromDateToRequest));
+    }
+
+    @GetMapping("/total_patients_today")
+    @ApiMessage("Thống kê số bệnh nhân điều trị hôm nay")
+    public ResponseEntity<TotalPatientInDayResponse> getAllPatientInDate(){
+        return ResponseEntity.ok().body(this.statisticService.getAllPatientsInDate());
+    }
+
 }

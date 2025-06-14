@@ -9,7 +9,10 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TotalCostIndayResponse {
-    String date;
+public class TotalCostFromDateToResponse {
+    String fromDate;
+
+    String toDate;
+
     Double totalCost;
 }

@@ -56,5 +56,8 @@ public class MedicineEntity {
     @OneToMany(mappedBy = "medicine")
     Set<PatientMedicineEntity> prescriptions;
 
+    @ManyToMany(mappedBy = "medicines")
+    Set<FinanceMedicineEntity> financeMedicines;
+
 
 }

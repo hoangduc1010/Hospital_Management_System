@@ -61,7 +61,7 @@ public class PatientEntity {
     Set<PatientMedicineEntity> prescriptions;
 
     @OneToMany(mappedBy = "patient")
-    Set<FinanceEntity> financeSet;
+    Set<FinancePatientEntity> financeSet;
 
 
 

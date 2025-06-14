@@ -8,13 +8,13 @@ import hospital.management.hospital_management.dto.request.PrescribeMedicationRe
 import hospital.management.hospital_management.dto.response.PatienResponse;
 import hospital.management.hospital_management.dto.response.PrescribeMedicationResponse;
 import hospital.management.hospital_management.dto.response.ResponsePaginationDTO;
-import hospital.management.hospital_management.dto.response.UserResponse;
 import hospital.management.hospital_management.helper.PaginationHelper;
 import hospital.management.hospital_management.helper.PatientServiceHelper;
 import hospital.management.hospital_management.repository.*;
 import hospital.management.hospital_management.util.constant.PatientStatusEnum;
 import hospital.management.hospital_management.util.constant.RoleEnum;
 import hospital.management.hospital_management.util.error.CustomException;
+import hospital.management.hospital_management.util.format.FormatStringDateToInstant;
 import hospital.management.hospital_management.util.secutiry.SecurityUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +44,7 @@ public class PatientService {
     private final MedicineRepository medicineRepository;
     private final PatientMedicineRepository patientMedicineRepository;
     private final FinanceRepository financeRepository;
+    private final FormatStringDateToInstant formatStringDateToInstant;
     public PatienResponse takeAppointments(PatientRequest patientRequest) throws CustomException {
         String username=SecurityUtil.getEmailOfCurrentUser();
         UserEntity currentUser=this.userRepository.findByUsername(username);
@@ -59,7 +60,7 @@ public class PatientService {
         PatientEntity patient=new PatientEntity();
         patient.setUser(currentUser);
         patient.setPatientStatus(PatientStatusEnum.WAITING);
-        Instant dateOfAppointments=this.patientServiceHelper.convertAppointmentDateToInstant(patientRequest.getDateOfAppointment());
+        Instant dateOfAppointments=this.formatStringDateToInstant.convertStringDateToInstant(patientRequest.getDateOfAppointment());
         patient.setDateOfAppointment(dateOfAppointments);
         patient.setAppointmentsType(patientRequest.getAppointmentsType());
         this.patientRepository.save(patient);
@@ -158,9 +159,9 @@ public class PatientService {
         this.patientServiceHelper.checkValidInfoPrescribeMedication(prescribeMedicationRequest);
         PatientEntity currentPatient=this.patientRepository.findById(prescribeMedicationRequest.getPatientId()).get();
         Set<MedicineEntity> medicines=new HashSet<>();
-        Set<FinanceEntity> finances=new HashSet<>();
-        finances.add(new FinanceEntity());
-        for(FinanceEntity finance:finances){
+        Set<FinancePatientEntity> finances=new HashSet<>();
+        finances.add(new FinancePatientEntity());
+        for(FinancePatientEntity finance:finances){
             finance.setPatient(currentPatient);
             finance.setIsPayment(false);
         }
@@ -171,9 +172,9 @@ public class PatientService {
             currentPatientMedicine.setPatient(currentPatient);
             MedicineEntity currentMedicine=this.medicineRepository.findByMedicineName(medicine.getMedicineName().trim());
             currentPatientMedicine.setMedicine(currentMedicine);
-            currentPatientMedicine.setQuantity(medicine.getQuantity());
+            currentPatientMedicine.setQuantity(medicine.getQuantityInStock());
             currentPatientMedicine.setIsPayment(false);
-            Integer remainQuantity=currentMedicine.getQuantityInStock()-medicine.getQuantity();
+            Integer remainQuantity=currentMedicine.getQuantityInStock()-medicine.getQuantityInStock();
             currentMedicine.setQuantityInStock(remainQuantity);
             this.medicineRepository.save(currentMedicine);
             this.patientMedicineRepository.save(currentPatientMedicine);

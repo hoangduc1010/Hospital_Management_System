@@ -19,15 +19,34 @@ public class MedicineServiceHelper {
             if(oldMedicine==null){
                 throw new CustomException("Id không tồn tại");
             }
+            return;
         }
         if(medicineRequest.getMedicineName()==null){
             throw new CustomException("Tên của thuốc không được để trống");
         }
-        MedicineEntity currentMedicine=this.medicineRepository.findByMedicineName(medicineRequest.getMedicineName());
-        if(currentMedicine!=null){
-            throw new CustomException("Thuốc đã tồn tại trong kho");
+        MedicineEntity currentMedicine=this.medicineRepository.findByMedicineNameAndActiveIngredientAndDosageFormAndStrengthAndUnitAndManufacturerAndCountryOfOrigin(
+                medicineRequest.getMedicineName(),
+                medicineRequest.getActiveIngredient(),
+                medicineRequest.getDosageForm(),
+                medicineRequest.getStrength(),
+                medicineRequest.getUnit(),
+                medicineRequest.getManufacturer(),
+                medicineRequest.getCountryOfOrigin());
+        if(currentMedicine!=null && medicineRequest.getId()==null){
+            throw new CustomException(
+                    "Thuốc có thông tin:\n" +
+                            "- Tên: " + medicineRequest.getMedicineName() + "\n" +
+                            "- Hoạt chất: " + medicineRequest.getActiveIngredient() + "\n" +
+                            "- Dạng bào chế: " + medicineRequest.getDosageForm() + "\n" +
+                            "- Hàm lượng hoạt chất: " + medicineRequest.getStrength() + "\n" +
+                            "- Đơn vị định lượng: " + medicineRequest.getUnit() + "\n" +
+                            "- Nhà sản xuất: " + medicineRequest.getManufacturer() + "\n" +
+                            "- Xuất xứ: " + medicineRequest.getCountryOfOrigin() + "\n" +
+                            "đã tồn tại."
+            );
         }
-        if(medicineRequest.getQuantity()!=null && medicineRequest.getQuantity()<=0){
+
+        if(medicineRequest.getQuantityInStock()!=null && medicineRequest.getQuantityInStock()<=0){
             throw new CustomException("Số lượng cần phải lớn hơn 0");
         }
         if(medicineRequest.getPurchasePrice() <=0 && medicineRequest.getPurchasePrice()!=null){
@@ -42,6 +61,8 @@ public class MedicineServiceHelper {
         if(medicineRequest.getMedicineCategory()==null){
             throw new CustomException("Danh mục thuốc không được để trống");
         }
+
+
     }
     public void checkValidInfoDeleteMedicine(Long medicineId) throws CustomException{
         MedicineEntity currentMedicine=this.medicineRepository.findById(medicineId).get();

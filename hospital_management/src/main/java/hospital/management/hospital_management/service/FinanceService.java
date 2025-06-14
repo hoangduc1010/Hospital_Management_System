@@ -31,19 +31,19 @@ public class FinanceService {
         this.financeServiceHelper.checkValidInfoCreateFinance(financeRequest);
 
         PatientEntity currentPatient=this.patientRepository.findById(financeRequest.getPatientId()).get();
-        FinanceEntity currentFinanceEntity = currentPatient.getFinanceSet()
+        FinancePatientEntity currentFinancePatientEntity = currentPatient.getFinanceSet()
                 .stream()
                 .filter(f -> !f.getIsPayment())
                 .findFirst()
                 .orElse(null);
-        currentFinanceEntity.setPatient(currentPatient);
+        currentFinancePatientEntity.setPatient(currentPatient);
         FinanceDetailEntity currentFinanceDetailEntity=new FinanceDetailEntity();
         Set<MedicineEntity> medicineEntitySet=new HashSet<>();
 
 
 
-        currentFinanceEntity.setPaymentType(financeRequest.getPaymentType());
-        currentFinanceEntity.setInsuranceCoverage(financeRequest.getInsuranceCoverage());
+        currentFinancePatientEntity.setPaymentType(financeRequest.getPaymentType());
+        currentFinancePatientEntity.setInsuranceCoverage(financeRequest.getInsuranceCoverage());
         currentFinanceDetailEntity.setAppointmentsType(currentPatient.getAppointmentsType());
 
         Double totalCost=0.0;
@@ -60,12 +60,12 @@ public class FinanceService {
             }
         }
         totalCost=totalCost-(totalCost * financeRequest.getInsuranceCoverage() / 100);
-        currentFinanceEntity.setTotalCost(totalCost);
-        currentFinanceEntity.setIsPayment(true);
-        this.financeRepository.save(currentFinanceEntity);
+        currentFinancePatientEntity.setTotalCost(totalCost);
+        currentFinancePatientEntity.setIsPayment(true);
+        this.financeRepository.save(currentFinancePatientEntity);
         this.patientRepository.save(currentPatient);
         currentFinanceDetailEntity.setMedicineSet(medicineEntitySet);
-        currentFinanceDetailEntity.setFinance(currentFinanceEntity);
+        currentFinanceDetailEntity.setFinance(currentFinancePatientEntity);
         this.financeDetailRepository.save(currentFinanceDetailEntity);
         FinanceResponse financeResponse=this.financeServiceHelper.convertToFinanceResponse(currentPatient);
         return financeResponse;

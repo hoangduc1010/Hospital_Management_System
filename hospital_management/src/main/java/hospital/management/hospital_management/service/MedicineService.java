@@ -1,6 +1,7 @@
 package hospital.management.hospital_management.service;
 
 
+import hospital.management.hospital_management.domain.FinanceMedicineEntity;
 import hospital.management.hospital_management.domain.MedicineEntity;
 import hospital.management.hospital_management.dto.request.MedicineRequest;
 import hospital.management.hospital_management.dto.response.MedicineResponse;
@@ -17,7 +18,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -26,16 +29,28 @@ public class MedicineService {
     private final ModelMapper modelMapper;
     private final MedicineServiceHelper medicineServiceHelper;
     private final PaginationHelper paginationHelper;
+    private final FinanceMedicineService  financeMedicineService;
+
     public MedicineResponse saveMedicine(MedicineRequest medicineRequest) throws CustomException {
         this.medicineServiceHelper.checkValidInfoSaveMedicine(medicineRequest);
         MedicineEntity currentMedicine=new MedicineEntity();
+        Integer oldQuantity=0;
         if(medicineRequest.getId()!=null){
             currentMedicine=this.medicineRepository.findById(medicineRequest.getId()).get();
+            oldQuantity=currentMedicine.getQuantityInStock();
         }
         MedicineResponse medicineResponse=new MedicineResponse();
         modelMapper.getConfiguration().setSkipNullEnabled(true);
         modelMapper.map(medicineRequest,currentMedicine);
+        if(medicineRequest.getId()!=null){
+            currentMedicine.setQuantityInStock(oldQuantity+medicineRequest.getQuantityInStock());
+        }
         this.medicineRepository.save(currentMedicine);
+
+        Set<MedicineEntity> medicineBuyIn=new HashSet<>();
+        medicineBuyIn.add(currentMedicine);
+        this.financeMedicineService.saveFinanceMedicineWithMedicineBuyIn(medicineBuyIn,medicineRequest);
+
         modelMapper.map(currentMedicine,medicineResponse);
         return medicineResponse;
     }

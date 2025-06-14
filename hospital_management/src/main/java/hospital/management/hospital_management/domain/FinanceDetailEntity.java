@@ -4,7 +4,7 @@ import hospital.management.hospital_management.util.constant.AppointmentsTypeEnu
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import java.time.Instant;
+
 import java.util.Set;
 
 @Entity
@@ -22,10 +22,10 @@ public class FinanceDetailEntity {
 
     @ManyToOne
     @JoinColumn(name = "finance_id", nullable = false)
-    FinanceEntity finance;
+    FinancePatientEntity finance;
 
     @ManyToMany
-    @JoinTable(name="finance_medicine",
+    @JoinTable(name="finance_patient_medicine",
     joinColumns = @JoinColumn(name="finance_detail_id"),
     inverseJoinColumns = @JoinColumn(name="medicine_id"))
     Set<MedicineEntity> medicineSet;

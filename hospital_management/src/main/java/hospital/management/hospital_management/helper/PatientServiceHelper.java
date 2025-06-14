@@ -6,7 +6,6 @@ import hospital.management.hospital_management.dto.request.MedicineRequest;
 import hospital.management.hospital_management.dto.request.PatientRequest;
 import hospital.management.hospital_management.dto.request.PrescribeMedicationRequest;
 import hospital.management.hospital_management.dto.response.MedicalRecordResponse;
-import hospital.management.hospital_management.dto.response.MedicineResponse;
 import hospital.management.hospital_management.dto.response.PatienResponse;
 import hospital.management.hospital_management.dto.response.PrescribeMedicationResponse;
 import hospital.management.hospital_management.repository.DepartmentRepository;
@@ -18,10 +17,7 @@ import hospital.management.hospital_management.util.error.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
+
 import java.util.*;
 
 @Component
@@ -70,14 +66,6 @@ public class PatientServiceHelper {
         return patienResponse;
     }
 
-    public Instant convertAppointmentDateToInstant(String dateOfAppointment){
-        String dateString = dateOfAppointment;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-        LocalDateTime localDateTime = LocalDateTime.parse(dateString, formatter);
-        Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
-
-        return instant;
-    }
     public void checkValidCancelAppointments(UserEntity currentUser) throws CustomException{
         if(currentUser==null){
             throw new CustomException("Tài khoản không tồn tại");
@@ -152,7 +140,7 @@ public class PatientServiceHelper {
                 currentPatient.getPatientStatus().equals(PatientStatusEnum.OUTPATIENT))){
             throw new CustomException("Bệnh nhân có trạng thái "+currentPatient.getPatientStatus()+" không thể kê thuốc");
         }
-        for(FinanceEntity finance:currentPatient.getFinanceSet()){
+        for(FinancePatientEntity finance:currentPatient.getFinanceSet()){
             if(finance.getIsPayment()==false){
                 throw new CustomException("Bạn có hoá đơn chưa thanh toán nên không thể thực hiện kê thuốc");
             }
@@ -167,7 +155,7 @@ public class PatientServiceHelper {
         for (MedicineRequest req : prescribeMedicationRequest.getMedicines()) {
             Map<String, Object> medicineData = new HashMap<>();
             medicineData.put("medicineName", req.getMedicineName());
-            medicineData.put("quantity", req.getQuantity());
+            medicineData.put("quantity", req.getQuantityInStock());
             medicines.add(medicineData);
         }
         prescribeMedicationResponse.setMedicines(medicines);

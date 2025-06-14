@@ -11,7 +11,6 @@ import hospital.management.hospital_management.repository.PatientRepository;
 import hospital.management.hospital_management.util.error.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -61,8 +60,8 @@ public class FinanceServiceHelper {
     }
     public FinanceResponse convertToFinanceResponse(PatientEntity patient){
         FinanceResponse financeResponse=new FinanceResponse();
-        Set<FinanceEntity> financeEntities=patient.getFinanceSet();
-        for(FinanceEntity finance:financeEntities){
+        Set<FinancePatientEntity> financeEntities=patient.getFinanceSet();
+        for(FinancePatientEntity finance:financeEntities){
                 financeResponse.setFinanceId(finance.getFinanceId());
                 financeResponse.setTotalPrice(finance.getTotalCost());
                 financeResponse.setPaymentType(finance.getPaymentType());
