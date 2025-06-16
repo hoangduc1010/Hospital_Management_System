@@ -7,6 +7,7 @@ import hospital.management.hospital_management.repository.FinanceMedicineReposit
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Set;
 
 @Service
@@ -17,6 +18,7 @@ public class FinanceMedicineService {
         FinanceMedicineEntity financeMedicineEntity=new FinanceMedicineEntity();
         financeMedicineEntity.setTotalCost(medicineRequest.getPurchasePrice() * medicineRequest.getQuantityInStock());
         financeMedicineEntity.setMedicines(medicineBuyIn);
+        financeMedicineEntity.setBuyInDate(Instant.now());
         this.financeMedicineRepository.save(financeMedicineEntity);
     }
 }

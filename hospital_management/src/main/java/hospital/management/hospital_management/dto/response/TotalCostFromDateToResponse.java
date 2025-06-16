@@ -14,5 +14,7 @@ public class TotalCostFromDateToResponse {
 
     String toDate;
 
-    Double totalCost;
+    Double totalCostFromPatients;
+
+    Double totalCostFromMedicines;
 }

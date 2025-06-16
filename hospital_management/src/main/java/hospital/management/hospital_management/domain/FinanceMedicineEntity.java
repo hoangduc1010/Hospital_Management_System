@@ -29,6 +29,7 @@ public class FinanceMedicineEntity {
     )
     Set<MedicineEntity> medicines;
 
+    Instant buyInDate;
 
     Instant createdAt;
 

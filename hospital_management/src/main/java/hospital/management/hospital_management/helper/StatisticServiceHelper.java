@@ -57,31 +57,48 @@ public class StatisticServiceHelper {
 
     }
 
-    public TotalCostIndayResponse convertToTotalCostInDayResponse(List<FinancePatientEntity> financeInDay){
+    public TotalCostIndayResponse convertToTotalCostInDayResponse(List<FinancePatientEntity> financePatientInDay,List<FinanceMedicineEntity> financeMedicineInDay){
         TotalCostIndayResponse totalCostIndayResponse=new TotalCostIndayResponse();
-        Double totalCostInDay=0.0;
-        for(FinancePatientEntity finance:financeInDay){
-            totalCostInDay=totalCostInDay+finance.getTotalCost();
+        Double totalCostFromPatientsInDay=0.0;
+        Double totalCostFromBuyInMedicinesInDay=0.0;
+
+        for(FinancePatientEntity finance:financePatientInDay){
+            totalCostFromPatientsInDay=totalCostFromPatientsInDay+finance.getTotalCost();
         }
-        totalCostIndayResponse.setTotalCost(totalCostInDay);
+
+        for(FinanceMedicineEntity financeMedicineEntity:financeMedicineInDay){
+            totalCostFromBuyInMedicinesInDay=totalCostFromBuyInMedicinesInDay+financeMedicineEntity.getTotalCost();
+        }
+
+        totalCostIndayResponse.setTotalCostPatient(totalCostFromPatientsInDay);
+        totalCostIndayResponse.setTotalCostBuyInMedicines(totalCostFromBuyInMedicinesInDay);
         String today= LocalDate.now().toString();
         totalCostIndayResponse.setDate(today);
         return totalCostIndayResponse;
     }
 
-    public TotalCostFromDateToResponse convertToTotalCostFromDateToResponse(List<FinancePatientEntity> financeInDay, TotalCostFromDateToRequest totalCostFromDateToRequest){
+    public TotalCostFromDateToResponse convertToTotalCostFromDateToResponse(List<FinancePatientEntity> financePatientFromDay,
+                                                                            List<FinanceMedicineEntity> financeMedicineFromDay,
+                                                                            TotalCostFromDateToRequest totalCostFromDateToRequest){
         TotalCostFromDateToResponse totalCostFromDateToResponse=new TotalCostFromDateToResponse();
-        Double totalCostFromDateTo=0.0;
-        for(FinancePatientEntity finance:financeInDay){
-            totalCostFromDateTo=totalCostFromDateTo+finance.getTotalCost();
+        Double totalCostPatientsFromDateTo=0.0;
+        Double totalCostMedicinesFromDateTo=0.0;
+
+        for(FinancePatientEntity financePatient:financePatientFromDay){
+            totalCostPatientsFromDateTo=totalCostPatientsFromDateTo+financePatient.getTotalCost();
         }
+        for(FinanceMedicineEntity financeMedicine:financeMedicineFromDay){
+            totalCostMedicinesFromDateTo=totalCostMedicinesFromDateTo+financeMedicine.getTotalCost();
+        }
+
         if(totalCostFromDateToRequest.getStartDate()!=null){
             totalCostFromDateToResponse.setFromDate(totalCostFromDateToRequest.getStartDate());
         }
         if(totalCostFromDateToRequest.getEndDate()!=null){
             totalCostFromDateToResponse.setToDate(totalCostFromDateToRequest.getEndDate());
         }
-        totalCostFromDateToResponse.setTotalCost(totalCostFromDateTo);
+        totalCostFromDateToResponse.setTotalCostFromPatients(totalCostPatientsFromDateTo);
+        totalCostFromDateToResponse.setTotalCostFromMedicines(totalCostMedicinesFromDateTo);
         return totalCostFromDateToResponse;
     }
 

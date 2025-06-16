@@ -1,10 +1,12 @@
 package hospital.management.hospital_management.service;
 
+import hospital.management.hospital_management.domain.FinanceMedicineEntity;
 import hospital.management.hospital_management.domain.FinancePatientEntity;
 import hospital.management.hospital_management.domain.PatientEntity;
 import hospital.management.hospital_management.dto.request.TotalCostFromDateToRequest;
 import hospital.management.hospital_management.dto.response.*;
 import hospital.management.hospital_management.helper.StatisticServiceHelper;
+import hospital.management.hospital_management.repository.FinanceMedicineRepository;
 import hospital.management.hospital_management.repository.FinanceRepository;
 import hospital.management.hospital_management.repository.PatientRepository;
 import hospital.management.hospital_management.util.constant.PatientStatusEnum;
@@ -29,16 +31,20 @@ public class StatisticService {
     private final FinanceRepository financeRepository;
     private final FormatStringDateToInstant formatStringDateToInstant;
     private final PatientRepository patientRepository;
+    private final FinanceMedicineRepository financeMedicineRepository;
     public List<DoctorNurseActiveResponse> getAllDoctorAndNurseAreActive(){
         return this.statisticServiceHelper.convertToDoctorNurseResponse();
     }
     public TotalCostIndayResponse getTotalCostInDay(){
         ZoneId zone = ZoneId.of("Asia/Ho_Chi_Minh");
         LocalDate today = LocalDate.now(zone);
+
         Instant startOfDay = today.atStartOfDay(zone).toInstant();
         Instant endOfDay = today.plusDays(1).atStartOfDay(zone).toInstant();
-        List<FinancePatientEntity> financeInDay=this.financeRepository.findByBillingDateBetween(startOfDay,endOfDay);
-        return this.statisticServiceHelper.convertToTotalCostInDayResponse(financeInDay);
+
+        List<FinancePatientEntity> financePatientInDay=this.financeRepository.findByBillingDateBetween(startOfDay,endOfDay);
+        List<FinanceMedicineEntity> financeMedicineInDay=this.financeMedicineRepository.findByBuyInDateBetween(startOfDay,endOfDay);
+        return this.statisticServiceHelper.convertToTotalCostInDayResponse(financePatientInDay,financeMedicineInDay);
     }
 
     public TotalCostFromDateToResponse getTotalCostFromDateTo(TotalCostFromDateToRequest totalCostFromDateToRequest) throws CustomException {
@@ -46,24 +52,40 @@ public class StatisticService {
             throw new CustomException("Ngày bắt đầu hoặc ngày kết thúc không được bỏ trống");
         }
 
+        // start date not null, end date null
         if (totalCostFromDateToRequest.getStartDate() != null && totalCostFromDateToRequest.getEndDate() == null) {
+
+
+            //start end end are get the same from start;
             Instant start = this.formatStringDateToInstant.getStartOfDay(totalCostFromDateToRequest.getStartDate());
             Instant end = this.formatStringDateToInstant.getEndOfDay(totalCostFromDateToRequest.getStartDate());
-            List<FinancePatientEntity> financeInDay = this.financeRepository.findByBillingDateBetween(start, end);
-            return this.statisticServiceHelper.convertToTotalCostFromDateToResponse(financeInDay, totalCostFromDateToRequest);
+
+            List<FinancePatientEntity> financePatientInDay = this.financeRepository.findByBillingDateBetween(start, end);
+            List<FinanceMedicineEntity> financeMedicineInDay= this.financeMedicineRepository.findByBuyInDateBetween(start,end);
+            return this.statisticServiceHelper.convertToTotalCostFromDateToResponse(financePatientInDay, financeMedicineInDay,totalCostFromDateToRequest);
         }
 
+
+        //start date null , end date not null
         if (totalCostFromDateToRequest.getEndDate() != null && totalCostFromDateToRequest.getStartDate() == null) {
+
+            // start and end are get the same from end date;
             Instant start = this.formatStringDateToInstant.getStartOfDay(totalCostFromDateToRequest.getEndDate());
             Instant end = this.formatStringDateToInstant.getEndOfDay(totalCostFromDateToRequest.getEndDate());
             List<FinancePatientEntity> financeInDay = this.financeRepository.findByBillingDateBetween(start, end);
-            return this.statisticServiceHelper.convertToTotalCostFromDateToResponse(financeInDay, totalCostFromDateToRequest);
+            List<FinanceMedicineEntity> financeMedicineInDay= this.financeMedicineRepository.findByBuyInDateBetween(start,end);
+
+            return this.statisticServiceHelper.convertToTotalCostFromDateToResponse(financeInDay, financeMedicineInDay,totalCostFromDateToRequest);
         }
 
+
+        // start date and end date not null
         Instant startDate = this.formatStringDateToInstant.getStartOfDay(totalCostFromDateToRequest.getStartDate());
         Instant endDate = this.formatStringDateToInstant.getEndOfDay(totalCostFromDateToRequest.getEndDate());
-        List<FinancePatientEntity> finances = this.financeRepository.findByBillingDateBetween(startDate, endDate);
-        return this.statisticServiceHelper.convertToTotalCostFromDateToResponse(finances, totalCostFromDateToRequest);
+        List<FinancePatientEntity> financePatientInDay = this.financeRepository.findByBillingDateBetween(startDate, endDate);
+        List<FinanceMedicineEntity> financeMedicineInDay= this.financeMedicineRepository.findByBuyInDateBetween(startDate,endDate);
+
+        return this.statisticServiceHelper.convertToTotalCostFromDateToResponse(financePatientInDay,financeMedicineInDay, totalCostFromDateToRequest);
 
 
     }

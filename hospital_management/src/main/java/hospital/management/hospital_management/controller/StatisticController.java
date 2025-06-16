@@ -34,13 +34,13 @@ public class StatisticController {
     }
 
     @GetMapping("/total_cost_today")
-    @ApiMessage("Thống kế tổng chi phí thu về hôm nay")
+    @ApiMessage("Thống kế tổng chi phí hôm nay")
     public ResponseEntity<TotalCostIndayResponse> statisticTotalCostInDay(){
         return ResponseEntity.ok().body(this.statisticService.getTotalCostInDay());
     }
 
     @GetMapping("/total_cost_from_to")
-    @ApiMessage("Thống kê tổng chi phí thu về trong khoảng ngày")
+    @ApiMessage("Thống kê tổng chi phí trong khoảng ngày")
     public ResponseEntity<TotalCostFromDateToResponse> statisticTotalCostFromDateTo(@RequestBody TotalCostFromDateToRequest totalCostFromDateToRequest) throws CustomException {
         return ResponseEntity.ok().body(this.statisticService.getTotalCostFromDateTo(totalCostFromDateToRequest));
     }
